@@ -193,7 +193,7 @@ aside h3{font-weight:500;font-size:13px;margin:0 0 10px}
     <a href="{% url 'looks' %}">Looks</a>
     <a href="{% url 'new_in' %}">New in</a>
     <a href="{% url 'studio' %}">Studio</a>
-    <a href="#sale">Sale</a>
+    <a href="{% url 'admin_dashboard' %}" title="Staff Dashboard" style="font-weight:600;color:var(--accent,#a5472f);">Admin</a>
     <button class="bagbtn" id="bagbtn" aria-label="Open styling bag">Bag <b id="cnt">0</b></button>
   </nav>
 </header>
@@ -256,9 +256,9 @@ aside h3{font-weight:500;font-size:13px;margin:0 0 10px}
       <div><b>tread</b><span>Try the look.<br>Own the outfit.</span></div>
       <div><b>Shop</b><a href="#looks">Looks</a><a href="#new">New in</a><a href="#cats">Categories</a></div>
       <div><b>Help</b><a href="#faq">Shipping</a><a href="#faq">Returns</a><a href="#faq">Size guide</a></div>
-      <div><b>Company</b><a href="#about">About</a><a href="#contact">Contact</a><a href="#careers">Careers</a></div>
+      <div><b>Company</b><a href="#about">About</a><a href="#contact">Contact</a><a href="#careers">Careers</a><a href="{% url 'admin_login' %}" style="font-weight:600;">Admin Login</a></div>
     </div>
-    <span>© 2026 tread. All rights reserved.</span><span><a href="#ig">Instagram</a><a href="#yt">YouTube</a></span>
+    <span>© 2026 tread. All rights reserved. · <a href="{% url 'admin_login' %}" style="color:inherit;text-decoration:none;">Admin Login</a></span><span><a href="#ig">Instagram</a><a href="#yt">YouTube</a></span>
   </footer>
 </section>
 <div class="cur" id="cur"></div>
