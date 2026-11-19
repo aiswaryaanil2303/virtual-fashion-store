@@ -9,7 +9,7 @@ services:
     name: virtual-fashion-store
     runtime: python
     plan: free
-    buildCommand: "./build.sh"
+    buildCommand: "bash build.sh"
     startCommand: "gunicorn virtual_fashion_store.wsgi:application"
     envVars:
       - key: DATABASE_URL

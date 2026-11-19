@@ -104,22 +104,18 @@ WSGI_APPLICATION = 'virtual_fashion_store.wsgi.application'
 _db_url = os.environ.get('DATABASE_URL', '')
 
 if _db_url:
-    # Parse postgres://user:pass@host:port/name
-    import re
-    _m = re.match(r'postgres(?:ql)?://([^:]+):([^@]+)@([^:/]+):(\d+)/(.+)', _db_url)
-    if _m:
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'USER': _m.group(1),
-                'PASSWORD': _m.group(2),
-                'HOST': _m.group(3),
-                'PORT': _m.group(4),
-                'NAME': _m.group(5),
-            }
+    from urllib.parse import urlparse, unquote
+    _url = urlparse(_db_url)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': _url.path.lstrip('/'),
+            'USER': unquote(_url.username or ''),
+            'PASSWORD': unquote(_url.password or ''),
+            'HOST': _url.hostname or 'localhost',
+            'PORT': str(_url.port or 5432),
         }
-    else:
-        DATABASES = {'default': {'ENGINE': 'django.db.backends.postgresql'}}
+    }
 else:
     # Local development — use local PostgreSQL
     DATABASES = {
