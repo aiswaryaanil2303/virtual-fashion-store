@@ -1,0 +1,158 @@
+{% extends "fashion/admin/base.html" %}
+{% block title %}Orders{% endblock %}
+{% block breadcrumb %}Orders{% endblock %}
+{% block nav_orders %}active{% endblock %}
+
+{% block extra_head %}
+<style>
+  .filters-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+    max-width: 340px;
+  }
+  .search-wrap svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+  .search-wrap input {
+    padding-left: 38px;
+  }
+  .filter-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--bg-page);
+    padding: 4px;
+    border-radius: var(--radius-sm);
+  }
+  .filter-tab {
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: var(--text-muted);
+    font-family: 'Hanken Grotesk', sans-serif;
+    transition: all 0.15s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .filter-tab.active, .filter-tab:hover {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .filter-tab.active { color: var(--text-primary); }
+
+  .order-link {
+    font-weight: 700;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 13px;
+  }
+  .order-link:hover { color: #1ab00f; }
+
+  .results-count {
+    font-size: 13px;
+    color: var(--text-muted);
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border);
+    background: #fafafa;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-title">Orders</div>
+    <div class="page-subtitle">{{ orders.count }} order{{ orders.count|pluralize }} found</div>
+  </div>
+</div>
+
+<div class="card">
+  <!-- Filters -->
+  <form method="get" id="filterForm">
+    <div class="filters-bar">
+      <div class="search-wrap">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input
+          type="text"
+          name="q"
+          value="{{ search }}"
+          placeholder="Search by name, email, order #…"
+          class="form-control"
+          onchange="this.form.submit()"
+        />
+      </div>
+      <div class="filter-tabs">
+        <a href="?{% if search %}q={{ search }}&{% endif %}" class="filter-tab {% if not status_filter %}active{% endif %}">All</a>
+        <a href="?{% if search %}q={{ search }}&{% endif %}status=pending" class="filter-tab {% if status_filter == 'pending' %}active{% endif %}">Pending</a>
+        <a href="?{% if search %}q={{ search }}&{% endif %}status=confirmed" class="filter-tab {% if status_filter == 'confirmed' %}active{% endif %}">Confirmed</a>
+        <a href="?{% if search %}q={{ search }}&{% endif %}status=shipped" class="filter-tab {% if status_filter == 'shipped' %}active{% endif %}">Shipped</a>
+      </div>
+      {% if search or status_filter %}
+      <a href="{% url 'admin_orders' %}" class="btn btn-secondary btn-sm">Clear</a>
+      {% endif %}
+      <input type="hidden" name="status" value="{{ status_filter }}">
+    </div>
+  </form>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Order #</th>
+          <th>Customer</th>
+          <th>Email</th>
+          <th>City</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+        <tr>
+          <td><a href="{% url 'admin_order_detail' order.pk %}" class="order-link">{{ order.order_number }}</a></td>
+          <td style="font-weight:500;">{{ order.full_name }}</td>
+          <td style="color:var(--text-muted);font-size:13px;">{{ order.email }}</td>
+          <td style="color:var(--text-muted);font-size:13px;">{{ order.city }}</td>
+          <td style="font-weight:700;">${{ order.total }}</td>
+          <td><span class="badge badge-{{ order.status }}">{{ order.get_status_display }}</span></td>
+          <td style="color:var(--text-muted);font-size:13px;">{{ order.created_at|date:"M d, Y" }}</td>
+          <td>
+            <a href="{% url 'admin_order_detail' order.pk %}" class="btn btn-secondary btn-sm">Details</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="8">
+            <div class="empty-state">
+              <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+              <p>No orders match your filters.</p>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

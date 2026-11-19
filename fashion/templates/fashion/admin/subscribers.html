@@ -1,0 +1,95 @@
+{% extends "fashion/admin/base.html" %}
+{% block title %}Subscribers{% endblock %}
+{% block breadcrumb %}Subscribers{% endblock %}
+{% block nav_subscribers %}active{% endblock %}
+
+{% block extra_head %}
+<style>
+  .sub-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .sub-count {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .sub-count strong { color: var(--text-primary); font-size: 20px; font-weight: 800; }
+
+  .email-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .email-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--accent-dim);
+    color: #1a7a10;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-title">Subscribers</div>
+    <div class="page-subtitle">Newsletter sign-ups from the homepage</div>
+  </div>
+  <a href="{% url 'admin_subscribers' %}?export=csv" class="btn btn-primary">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Export CSV
+  </a>
+</div>
+
+<div class="card">
+  <div class="sub-header">
+    <div>
+      <strong>{{ subscribers|length }}</strong>
+      <span class="sub-count"> subscriber{{ subscribers|length|pluralize }} on the list</span>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Email Address</th>
+          <th>Subscribed</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for sub in subscribers %}
+        <tr>
+          <td style="color:var(--text-muted);font-size:13px;width:48px;">{{ forloop.counter }}</td>
+          <td>
+            <div class="email-cell">
+              <div class="email-avatar">{{ sub.email|first|upper }}</div>
+              <span style="font-weight:500;">{{ sub.email }}</span>
+            </div>
+          </td>
+          <td style="color:var(--text-muted);font-size:13px;">{{ sub.subscribed_at|date:"M d, Y \a\t H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="3">
+            <div class="empty-state">
+              <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <p>No subscribers yet.</p>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

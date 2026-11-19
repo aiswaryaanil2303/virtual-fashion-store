@@ -1,0 +1,439 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>New In — Latest Drop | tread</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Hanken+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f6f1;--panel:#fcfbf8;--card:#ffffff;--line:#e2dfd7;
+  --ink:#16161a;--mut:#7a776f;--accent:#a5472f;--sh:rgba(20,18,12,.08);
+  --serif:"Cormorant Garamond",Georgia,serif;
+  --sans:"Hanken Grotesk",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+body{
+  background:var(--bg);color:var(--ink);font:400 14px/1.45 var(--sans);
+  min-height:100svh;display:flex;flex-direction:column;
+}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+/* Top Bar */
+header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:16px clamp(20px,4vw,44px);border-bottom:1px solid var(--line);
+  background:rgba(252,251,248,.92);backdrop-filter:blur(10px);position:sticky;top:0;z-index:20;
+}
+.logo{font-weight:600;font-size:21px;letter-spacing:-.04em;font-style:italic;text-decoration:none;color:var(--ink)}
+nav{display:flex;align-items:center;gap:24px;font-size:13px}
+nav a{color:var(--mut);text-decoration:none;transition:color .2s}
+nav a:hover,nav a.active{color:var(--ink);font-weight:500}
+.bagbtn{
+  display:flex;align-items:center;gap:8px;padding:6px 14px;
+  border:1px solid var(--line);border-radius:20px;font-size:12px;font-weight:500;
+  background:var(--card);transition:.2s;
+}
+.bagbtn:hover{border-color:var(--ink)}
+.bagbtn b{background:var(--ink);color:#fff;min-width:18px;height:18px;border-radius:9px;display:grid;place-items:center;font-size:11px}
+
+/* Editorial Drop Banner */
+.drop-hero{
+  padding:clamp(32px,5vw,64px) clamp(20px,5vw,64px) 28px;
+  border-bottom:1px solid var(--line);
+  background:radial-gradient(circle at 85% 20%,#ffffff 0%,#f7f6f1 70%);
+  display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:20px;
+}
+.drop-hero small{
+  display:block;font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--accent);font-weight:600;margin-bottom:8px;
+}
+.drop-hero h1{
+  font-family:var(--serif);font-size:clamp(38px,5vw,68px);font-weight:400;line-height:1;letter-spacing:-.02em;
+}
+.drop-hero p{color:var(--mut);max-width:38ch;font-size:14px}
+
+/* Filter & Sort Toolbar */
+.toolbar{
+  padding:16px clamp(20px,5vw,64px);border-bottom:1px solid var(--line);
+  background:var(--panel);display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:14px;
+}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tab{
+  padding:7px 16px;border-radius:20px;border:1px solid var(--line);
+  font-size:12px;color:var(--mut);background:var(--card);transition:.2s;
+}
+.tab:hover{border-color:var(--ink);color:var(--ink)}
+.tab.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.sort-box{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--mut)}
+.sort-box select{
+  font:inherit;font-size:12px;padding:7px 12px;border-radius:8px;
+  border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;
+}
+
+/* Product Grid */
+.grid-wrap{padding:clamp(24px,4vw,48px) clamp(20px,5vw,64px) 80px;flex:1}
+.grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:clamp(18px,2vw,28px);
+}
+.pcard{
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  overflow:hidden;display:flex;flex-direction:column;transition:transform .35s,box-shadow .35s;
+}
+.pcard:hover{transform:translateY(-5px);box-shadow:0 16px 36px var(--sh)}
+.p-media{
+  position:relative;aspect-ratio:4/5;background:linear-gradient(180deg,#ffffff,#f0efe9);
+  display:grid;place-items:center;overflow:hidden;cursor:pointer;
+}
+.p-media img{width:84%;height:84%;object-fit:contain;transition:transform .4s}
+.pcard:hover .p-media img{transform:scale(1.04)}
+.p-media svg{width:54%;height:54%}
+.badge{
+  position:absolute;top:12px;left:12px;background:var(--card);border:1px solid var(--line);
+  padding:3px 9px;border-radius:12px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
+}
+.p-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
+.p-cat{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+.p-title{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.p-title b{font-size:16px;font-weight:500}
+.p-title span{font-family:var(--serif);font-size:20px;font-weight:600}
+
+/* Colour Swatches inside Card */
+.dots-row{display:flex;align-items:center;gap:7px;margin-top:2px}
+.cdot{
+  width:16px;height:16px;border-radius:50%;border:1px solid rgba(0,0,0,.22);
+  position:relative;transition:transform .2s;
+}
+.cdot.on{outline:2px solid var(--ink);outline-offset:2px;transform:scale(1.1)}
+.cname{font-size:12px;color:var(--mut);margin-left:4px}
+
+.p-actions{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:auto;padding-top:10px}
+.add-btn{
+  padding:11px 14px;border-radius:8px;background:var(--ink);color:#fff;
+  font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;transition:.2s;
+}
+.add-btn:hover{background:var(--accent)}
+.qv-btn{
+  padding:0 12px;border-radius:8px;border:1px solid var(--line);font-size:12px;color:var(--ink);
+}
+.qv-btn:hover{border-color:var(--ink)}
+
+/* Quick View & Bag Modals */
+.ov{position:fixed;inset:0;background:rgba(16,16,20,.45);backdrop-filter:blur(5px);display:none;place-items:center;z-index:50;padding:16px}
+.ov.o{display:grid}
+.modal{width:min(460px,100%);max-height:88vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;box-shadow:0 24px 60px rgba(0,0,0,.2)}
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.mh h4{font-family:var(--serif);font-size:26px;font-weight:600}
+.bag-it{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid var(--line);font-size:13px}
+.bag-tot{display:flex;justify-content:space-between;padding:14px 0;border-top:1px solid var(--ink);font-weight:600;font-size:16px}
+
+.qv-grid{display:grid;grid-template-columns:160px 1fr;gap:18px;align-items:center;margin-top:10px}
+.qv-img{aspect-ratio:3/4;background:#f2f1ec;border-radius:10px;display:grid;place-items:center;overflow:hidden}
+.qv-img img,.qv-img svg{width:85%;height:85%;object-fit:contain}
+.sz-pills{display:flex;gap:6px;margin:12px 0}
+.sz-pills button{min-width:36px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;font-size:12px}
+.sz-pills button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+.toast{
+  position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);
+  background:var(--ink);color:#fff;padding:10px 18px;border-radius:20px;
+  font-size:13px;opacity:0;pointer-events:none;transition:.3s;z-index:60;
+}
+.toast.o{opacity:1;transform:translate(-50%,0)}
+@media(max-width:600px){.qv-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="{% url 'home' %}" class="logo">tread</a>
+  <nav>
+    <a href="{% url 'home' %}">Home</a>
+    <a href="{% url 'looks' %}">Looks</a>
+    <a href="{% url 'new_in' %}" class="active">New in</a>
+    <button class="bagbtn" id="bagbtn" type="button">Bag <b id="cnt">0</b></button>
+  </nav>
+</header>
+
+<section class="drop-hero">
+  <div>
+    <small>Drop 04 &mdash; Autumn / Winter 2026</small>
+    <h1>New Arrivals.</h1>
+  </div>
+  <p>Fresh silhouettes cut from heavyweight organic cotton, washed denim, and Italian suede. Ready to wear or pair in the studio.</p>
+</section>
+
+<div class="toolbar">
+  <div class="tabs" id="catTabs">
+    <button class="tab on" data-cat="all" type="button">All Pieces</button>
+    <button class="tab" data-cat="top" type="button">Tops &amp; Outerwear</button>
+    <button class="tab" data-cat="bottom" type="button">Bottoms</button>
+    <button class="tab" data-cat="shoes" type="button">Footwear</button>
+  </div>
+  <div class="sort-box">
+    <span id="itemCount">0 items</span>
+    <select id="sortSel" aria-label="Sort products">
+      <option value="featured">Featured</option>
+      <option value="low">Price: Low to High</option>
+      <option value="high">Price: High to Low</option>
+    </select>
+  </div>
+</div>
+
+<main class="grid-wrap">
+  <div class="grid" id="productGrid"></div>
+</main>
+
+<div class="ov" id="ov"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  var IMG_BASE = "{% static 'images/' %}";
+  var activeCat = 'all', sortBy = 'featured', selectedSize = 'M';
+
+  var CATALOG = [
+    { id: 'r1', cat: 'top', tag: 'New', name: 'Memory Long Sleeve', price: 88, rackIdx: 1, sh: 'long',
+      colors: [{ n: 'White', h: '#f4f1ea', a: '#c23a3a' }, { n: 'Cream', h: '#e9dcc4', a: '#8a2f2f' }, { n: 'Sky', h: '#bcd3e8', a: '#35507a' }] },
+    { id: 'r2', cat: 'top', tag: 'Drop 04', name: 'It’s Us Never Them Tee', price: 62, rackIdx: 2, sh: 'tee', txt: 'IT’S US|NEVER|THEM',
+      colors: [{ n: 'Black', h: '#1d1d20', a: '#f2eee6' }, { n: 'Pink', h: '#f0a3b8', a: '#1d1d20' }, { n: 'Yellow', h: '#f2d11a', a: '#1d1d20' }] },
+    { id: 'r3', cat: 'top', tag: 'New', name: 'Stonewash Overshirt', price: 112, rackIdx: 3, sh: 'long',
+      colors: [{ n: 'Charcoal', h: '#4b4d52', a: '#2b2c30' }, { n: 'Ash', h: '#8d8f94', a: '#55575c' }] },
+    { id: 'r4', cat: 'top', tag: 'Limited', name: 'Varsity Jacket', price: 168, rackIdx: 4, sh: 'jacket',
+      colors: [{ n: 'Black / Cream', h: '#17171a', a: '#efe6d3' }, { n: 'Navy / Cream', h: '#1f2c4a', a: '#efe6d3' }, { n: 'Green / Cream', h: '#24503a', a: '#efe6d3' }] },
+    { id: 'b1', cat: 'bottom', tag: 'New', name: 'Wide-Leg Selvedge Denim', price: 120, sh: 'bottom',
+      colors: [{ n: 'Light Wash', h: '#9fbbd8', a: '#7a9ab8', imgBase: 'bottom(1)' }, { n: 'Indigo', h: '#44566f', a: '#2d3b4e' }] },
+    { id: 'b2', cat: 'bottom', tag: 'New', name: 'Pleated Wool Trouser', price: 105, sh: 'bottom',
+      colors: [{ n: 'Charcoal', h: '#33363d', a: '#1e2024', imgBase: 'bottom(3)' }, { n: 'Tobacco', h: '#8a6b4a', a: '#684f35', imgBase: 'bottom(2)' }, { n: 'Ecru', h: '#d9d4c4', a: '#b8b2a0' }] },
+    { id: 'r5', cat: 'top', tag: 'New', name: 'Chambray Work Shirt', price: 94, rackIdx: 5, sh: 'long',
+      colors: [{ n: 'Blue', h: '#8fb0d4', a: '#5b7fa8' }, { n: 'Indigo', h: '#44566f', a: '#2c3a50' }] },
+    { id: 's1', cat: 'shoes', tag: 'New', name: 'Trail Runner Suede', price: 135, sh: 'shoes',
+      colors: [{ n: 'Black', h: '#1b1b1b', a: '#444', imgBase: 'shoe1' }, { n: 'Bone', h: '#e8e6df', a: '#c8c4b8' }, { n: 'Taupe', h: '#9a927f', a: '#756e5e' }] },
+    { id: 'r6', cat: 'top', tag: 'Drop 04', name: 'Snug Football Jersey', price: 78, rackIdx: 6, sh: 'tee', txt: 'SNUG|25',
+      colors: [{ n: 'Yellow', h: '#f2c40f', a: '#1f8a3a' }, { n: 'Blue', h: '#2447c8', a: '#f2c40f' }] },
+    { id: 's2', cat: 'shoes', tag: 'Limited', name: 'Road Racer Low', price: 150, sh: 'shoes',
+      colors: [{ n: 'Ember', h: '#c4502d', a: '#8c3318', imgBase: 'shoe2' }, { n: 'Bone', h: '#e8e6df', a: '#bbb' }] },
+    { id: 'b3', cat: 'bottom', tag: 'New', name: 'Utility Cargo Pant', price: 115, sh: 'bottom',
+      colors: [{ n: 'Tobacco', h: '#8a6b4a', a: '#5e472f', imgBase: 'bottom(2)' }, { n: 'Charcoal', h: '#33363d', a: '#1a1b1f', imgBase: 'bottom(3)' }] },
+    { id: 'r7', cat: 'top', tag: 'Core', name: 'Essential Heavy Tee', price: 48, rackIdx: 7, sh: 'tee',
+      colors: [{ n: 'White', h: '#f6f4ef', a: '#d9d4c8' }, { n: 'Sand', h: '#d8c9ac', a: '#b8a888' }, { n: 'Black', h: '#1d1d20', a: '#3a3a40' }] }
+  ];
+
+  var chosenColor = {};
+  CATALOG.forEach(function (item) { chosenColor[item.id] = 0; });
+
+  CATALOG.forEach(function (item) {
+    if (!item.rackIdx) return;
+    item.colors.forEach(function (col, cIdx) {
+      var ex = ['png', 'webp', 'jpg'];
+      (function tryLoad(k) {
+        if (k >= ex.length) return;
+        var im = new Image();
+        var src = IMG_BASE + 'rack' + item.rackIdx + '-' + (cIdx + 1) + '.' + ex[k];
+        im.onload = function () { col.img = src; renderGrid(); };
+        im.onerror = function () { tryLoad(k + 1); };
+        im.src = src;
+      })(0);
+    });
+  });
+
+  CATALOG.forEach(function (item) {
+    item.colors.forEach(function (col) {
+      if (!col.imgBase) return;
+      var ex = ['png', 'jpg', 'jpeg', 'webp', 'PNG', 'JPG', 'JPEG', 'WEBP'];
+      (function tryLoad(k) {
+        if (k >= ex.length) return;
+        var im = new Image();
+        var src = IMG_BASE + col.imgBase + '.' + ex[k];
+        im.onload = function () { col.img = src; renderGrid(); };
+        im.onerror = function () { tryLoad(k + 1); };
+        im.src = src;
+      })(0);
+    });
+  });
+
+  function garmentSvg(item, cIdx) {
+    var col = item.colors[cIdx];
+    var m = col.h, a = col.a || '#333';
+    if (item.sh === 'bottom') {
+      return '<svg viewBox="0 0 120 140"><path d="M32 14h56l8 112H68l-8-72-8 72H24z" fill="' + m + '" stroke="rgba(0,0,0,.15)"/><path d="M32 14h56v10H32z" fill="' + a + '" opacity=".4"/></svg>';
+    }
+    if (item.sh === 'shoes') {
+      return '<svg viewBox="0 0 140 90"><path d="M14 58l42-8 22-26 14 20 34 8v18H14z" fill="' + m + '" stroke="rgba(0,0,0,.2)"/><path d="M14 66h112v6H14z" fill="#fff" stroke="rgba(0,0,0,.15)"/></svg>';
+    }
+    var P = {
+      tee: 'M70 40L100 34L130 40L166 60L152 88L138 78V202H62V78L48 88L34 60Z',
+      long: 'M70 40L100 34L130 40L170 64L176 186L156 188L146 92L138 84V206H62V84L54 92L44 188L24 186L30 64Z',
+      jacket: 'M66 40L100 34L134 40L142 78V198H58V78Z'
+    }[item.sh || 'tee'];
+    var s = '<path d="' + P + '" fill="' + m + '" stroke="rgba(0,0,0,.12)"/>';
+    if (item.sh === 'jacket') {
+      s += '<path d="M66 40L30 66L22 180H44L58 100Z" fill="' + a + '"/><path d="M134 40L170 66L178 180H156L142 100Z" fill="' + a + '"/>';
+    }
+    (item.txt || '').split('|').forEach(function (t, k) {
+      s += '<text x="100" y="' + (108 + k * 24) + '" text-anchor="middle" font-size="20" font-weight="800" fill="' + a + '">' + t + '</text>';
+    });
+    return '<svg viewBox="0 0 200 230">' + s + '</svg>';
+  }
+
+  function mediaHtml(item, cIdx) {
+    var col = item.colors[cIdx];
+    return col.img ? '<img src="' + col.img + '" alt="' + item.name + '">' : garmentSvg(item, cIdx);
+  }
+
+  function toast(text) {
+    var t = document.getElementById('toast');
+    t.textContent = text;
+    t.classList.add('o');
+    clearTimeout(toast.t);
+    toast.t = setTimeout(function () { t.classList.remove('o'); }, 2000);
+  }
+
+  var Bag = {
+    items: JSON.parse(localStorage.getItem('tread_bag') || '[]'),
+    sync: function () {
+      localStorage.setItem('tread_bag', JSON.stringify(this.items));
+      document.getElementById('cnt').textContent = this.items.reduce(function (a, b) { return a + b.qty; }, 0);
+    },
+    add: function (item, cIdx, size) {
+      var col = item.colors[cIdx];
+      var key = item.id + '-' + cIdx + '-' + size;
+      var ex = this.items.find(function (x) { return x.id === key; });
+      if (ex) ex.qty += 1;
+      else this.items.push({ id: key, name: item.name, colour: col.n + ' (' + size + ')', price: item.price, qty: 1 });
+      this.sync();
+      toast(item.name + ' added to bag');
+    },
+    open: function () {
+      var m = document.getElementById('modal');
+      var sub = this.items.reduce(function (a, b) { return a + b.price * b.qty; }, 0);
+      m.innerHTML = '<div class="mh"><h4>Your Styling Bag</h4><button id="closeModal" type="button">✕</button></div>' +
+        (this.items.length ? this.items.map(function (it, idx) {
+          return '<div class="bag-it"><div><b>' + it.name + '</b><br><small style="color:var(--mut)">' + it.colour + ' &times; ' + it.qty + '</small></div>' +
+            '<div>$' + (it.price * it.qty) + ' <button data-rm="' + idx + '" style="color:var(--accent);margin-left:10px;font-size:11px;text-decoration:underline">Remove</button></div></div>';
+        }).join('') : '<p style="padding:20px 0;color:var(--mut)">Your bag is empty.</p>') +
+        '<div class="bag-tot"><span>Subtotal</span><span>$' + sub + '</span></div>';
+      document.getElementById('ov').classList.add('o');
+    }
+  };
+  Bag.sync();
+
+  function openQuickView(item) {
+    var cIdx = chosenColor[item.id];
+    var col = item.colors[cIdx];
+    var sizes = item.cat === 'shoes' ? ['8', '9', '10', '11'] : ['XS', 'S', 'M', 'L', 'XL'];
+    if (sizes.indexOf(selectedSize) === -1) selectedSize = sizes[1];
+
+    var m = document.getElementById('modal');
+    m.innerHTML =
+      '<div class="mh"><h4>' + item.name + '</h4><button id="closeModal" type="button">✕</button></div>' +
+      '<div class="qv-grid">' +
+        '<div class="qv-img">' + mediaHtml(item, cIdx) + '</div>' +
+        '<div>' +
+          '<small style="color:var(--mut);text-transform:uppercase;letter-spacing:.12em">' + col.n + '</small>' +
+          '<div style="font-size:22px;font-weight:600;margin:4px 0">$' + item.price + '</div>' +
+          '<p style="font-size:12px;color:var(--mut)">Relaxed studio fit. Pre-shrunk heavyweight fabric with reinforced seams.</p>' +
+          '<div class="sz-pills" id="qvSizes">' + sizes.map(function (sz) {
+            return '<button type="button" data-sz="' + sz + '"' + (sz === selectedSize ? ' class="on"' : '') + '>' + sz + '</button>';
+          }).join('') + '</div>' +
+          '<button class="add-btn" id="qvAdd" style="width:100%" type="button">Add to Bag &mdash; $' + item.price + '</button>' +
+        '</div>' +
+      '</div>';
+
+    document.getElementById('qvSizes').onclick = function (e) {
+      var b = e.target.closest('button');
+      if (!b) return;
+      selectedSize = b.dataset.sz;
+      document.querySelectorAll('#qvSizes button').forEach(function (x) { x.classList.toggle('on', x === b); });
+    };
+    document.getElementById('qvAdd').onclick = function () {
+      Bag.add(item, cIdx, selectedSize);
+      document.getElementById('ov').classList.remove('o');
+    };
+    document.getElementById('ov').classList.add('o');
+  }
+
+  function renderGrid() {
+    var list = CATALOG.filter(function (x) { return activeCat === 'all' || x.cat === activeCat; });
+    if (sortBy === 'low') list = list.slice().sort(function (a, b) { return a.price - b.price; });
+    if (sortBy === 'high') list = list.slice().sort(function (a, b) { return b.price - a.price; });
+
+    document.getElementById('itemCount').textContent = list.length + ' items';
+    var grid = document.getElementById('productGrid');
+    grid.innerHTML = list.map(function (item) {
+      var cIdx = chosenColor[item.id];
+      var col = item.colors[cIdx];
+      var dotsHtml = item.colors.map(function (c, k) {
+        return '<button type="button" class="cdot' + (k === cIdx ? ' on' : '') + '" data-pid="' + item.id + '" data-cidx="' + k + '" style="background:' + c.h + '" aria-label="' + c.n + '"></button>';
+      }).join('');
+
+      return '<article class="pcard">' +
+        '<div class="p-media" data-qv="' + item.id + '">' +
+          '<span class="badge">' + item.tag + '</span>' +
+          mediaHtml(item, cIdx) +
+        '</div>' +
+        '<div class="p-body">' +
+          '<span class="p-cat">' + item.cat + '</span>' +
+          '<div class="p-title"><b>' + item.name + '</b><span>$' + item.price + '</span></div>' +
+          '<div class="dots-row">' + dotsHtml + '<span class="cname">' + col.n + '</span></div>' +
+          '<div class="p-actions">' +
+            '<button type="button" class="add-btn" data-add="' + item.id + '">Add to bag</button>' +
+            '<button type="button" class="qv-btn" data-qv="' + item.id + '">Sizes</button>' +
+          '</div>' +
+        '</div>' +
+      '</article>';
+    }).join('');
+  }
+
+  document.getElementById('catTabs').onclick = function (e) {
+    var btn = e.target.closest('.tab');
+    if (!btn) return;
+    activeCat = btn.dataset.cat;
+    document.querySelectorAll('#catTabs .tab').forEach(function (t) { t.classList.toggle('on', t === btn); });
+    renderGrid();
+  };
+
+  document.getElementById('sortSel').onchange = function (e) {
+    sortBy = e.target.value;
+    renderGrid();
+  };
+
+  document.getElementById('productGrid').onclick = function (e) {
+    var dot = e.target.closest('.cdot');
+    if (dot) {
+      chosenColor[dot.dataset.pid] = +dot.dataset.cidx;
+      renderGrid();
+      return;
+    }
+    var add = e.target.closest('[data-add]');
+    if (add) {
+      var item = CATALOG.find(function (x) { return x.id === add.dataset.add; });
+      Bag.add(item, chosenColor[item.id], item.cat === 'shoes' ? '9' : 'M');
+      return;
+    }
+    var qv = e.target.closest('[data-qv]');
+    if (qv) {
+      var item2 = CATALOG.find(function (x) { return x.id === qv.dataset.qv; });
+      openQuickView(item2);
+    }
+  };
+
+  document.getElementById('bagbtn').onclick = function () { Bag.open(); };
+  document.getElementById('ov').onclick = function (e) {
+    if (e.target.id === 'ov' || e.target.id === 'closeModal') document.getElementById('ov').classList.remove('o');
+    if (e.target.dataset.rm !== undefined) {
+      Bag.items.splice(+e.target.dataset.rm, 1);
+      Bag.sync();
+      Bag.open();
+    }
+  };
+
+  renderGrid();
+})();
+</script>
+</body>
+</html>

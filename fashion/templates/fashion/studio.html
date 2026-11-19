@@ -1,0 +1,1276 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Try It On Studio | tread</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f6f1;--card:#ffffff;--swatch:#f6f6f5;--line:#e2dfd7;
+  --ink:#16161a;--mut:#7a776f;--accent:#a5472f;--ok:#24503a;
+  --sans:"Hanken Grotesk",system-ui,sans-serif;
+  --serif:"Cormorant Garamond",Georgia,serif;
+}
+*{box-sizing:border-box;margin:0}
+body{
+  background:var(--bg);color:var(--ink);font:400 14px/1.45 var(--sans);
+  min-height:100svh;display:flex;flex-direction:column;overflow-x:hidden;
+}
+button,input,select{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer}
+
+header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:16px clamp(20px,4vw,52px);border-bottom:1px solid var(--line);
+  background:rgba(247,246,241,.94);backdrop-filter:blur(10px);
+  position:sticky;top:0;z-index:30;
+}
+.logo{font-weight:700;font-size:20px;letter-spacing:-.05em;font-style:italic;text-decoration:none;color:var(--ink)}
+nav{display:flex;align-items:center;gap:24px;font-size:13px}
+nav a{color:var(--mut);text-decoration:none;transition:color .2s}
+nav a:hover,nav a.active{color:var(--ink);font-weight:500}
+.bagbtn{
+  display:flex;align-items:center;gap:7px;padding:6px 14px;
+  border:1px solid var(--line);border-radius:20px;font-size:12px;font-weight:500;
+  background:#fff;text-decoration:none;color:var(--ink);transition:.2s;
+}
+.bagbtn:hover{border-color:var(--ink)}
+.bagbtn b{background:var(--ink);color:#fff;min-width:18px;height:18px;border-radius:9px;display:grid;place-items:center;font-size:11px}
+
+.hero-intro{
+  text-align:center;max-width:620px;margin:0 auto;
+  padding:clamp(30px,4vw,48px) 20px clamp(24px,3vw,36px);
+}
+.hero-intro small{
+  display:block;font-size:11px;font-weight:600;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:8px;
+}
+.hero-intro h1{
+  font-family:var(--serif);font-size:clamp(32px,4vw,46px);font-weight:400;
+  letter-spacing:-.02em;line-height:1.1;margin-bottom:10px;
+}
+.hero-intro p{font-size:14px;color:var(--mut);line-height:1.55}
+.hero-intro p b{color:var(--ink);font-weight:600}
+
+.studio-shell{
+  width:min(1440px,100%);margin:0 auto;
+  padding:0 clamp(20px,4vw,40px) 80px;
+  display:grid;grid-template-columns:1fr;gap:32px;align-items:start;
+}
+.studio-shell.with-mirror{grid-template-columns:1.25fr 440px}
+
+.garment-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:22px;
+}
+.studio-shell.with-mirror .garment-grid{
+  grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+}
+
+.p-card{
+  display:flex;flex-direction:column;gap:10px;background:var(--card);
+  border:1px solid var(--line);border-radius:16px;padding:16px;transition:.2s;
+}
+.p-card:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(20,18,12,.06)}
+.p-card.active-tryon{border-color:var(--ink);box-shadow:0 14px 34px rgba(20,18,12,.09)}
+
+.p-visual{
+  position:relative;aspect-ratio:4/4.5;background:var(--swatch);border-radius:12px;
+  display:flex;align-items:center;justify-content:center;padding:24px;overflow:hidden;
+}
+.p-visual img{
+  width:100%;height:100%;object-fit:contain;
+  transition:transform .35s cubic-bezier(.2,.7,.2,1);
+}
+.p-visual:hover img{transform:scale(1.03)}
+
+.tryon-pill{
+  position:absolute;top:12px;left:12px;z-index:5;
+  display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;
+  background:#fff;border:1px solid var(--line);font-size:12px;font-weight:600;color:var(--ink);
+  transition:.2s;
+}
+.tryon-pill:hover{border-color:var(--ink)}
+.tryon-pill.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+.p-meta{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:4px}
+.p-meta h2{font-size:15px;font-weight:600}
+.p-meta span{font-size:14px;font-weight:500;font-variant-numeric:tabular-nums}
+.p-col-name{font-size:12px;color:var(--mut);margin-top:-6px}
+
+.p-actions{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-top:4px;padding-top:12px;border-top:1px solid #efede6;
+}
+.swatches{display:flex;align-items:center;gap:8px}
+.dot{
+  width:16px;height:16px;border-radius:50%;border:1px solid rgba(0,0,0,.22);transition:transform .15s;
+}
+.dot.on{outline:2px solid var(--ink);outline-offset:2px;transform:scale(1.08)}
+
+.quick-add{display:flex;align-items:center;gap:6px}
+.sz-sel{
+  border:1px solid var(--line);border-radius:8px;padding:4px 8px;
+  font-size:12px;background:#fff;color:var(--ink);
+}
+.add-mini{
+  padding:6px 12px;border-radius:8px;background:var(--ink);color:#fff;
+  font-size:12px;font-weight:500;transition:background .2s;
+}
+.add-mini:hover{background:var(--accent)}
+
+/* Sticky Fitting Room Panel */
+.mirror-panel{
+  display:none;position:sticky;top:80px;background:#fff;
+  border:1px solid #d9d6ce;border-radius:16px;overflow:hidden;
+  box-shadow:0 24px 60px rgba(20,18,12,.14);
+}
+.mirror-panel.open{display:block}
+
+.mirror-head{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 16px;border-bottom:1px solid var(--line);
+  font-size:12px;font-weight:600;
+}
+.mirror-head span{display:flex;align-items:center;gap:6px}
+.mirror-close{
+  width:28px;height:28px;border-radius:50%;display:grid;place-items:center;
+  color:var(--mut);font-size:18px;
+}
+.mirror-close:hover{background:var(--bg);color:var(--ink)}
+
+.mode-tabs{
+  display:grid;grid-template-columns:1fr 1fr;gap:4px;
+  padding:6px;background:var(--bg);border-bottom:1px solid var(--line);
+}
+.mode-btn{
+  padding:6px 10px;border-radius:8px;font-size:12px;font-weight:500;color:var(--mut);
+}
+.mode-btn.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.06)}
+
+.mirror-viewport{
+  position:relative;width:100%;aspect-ratio:1/1;background:#18181c;overflow:hidden;
+}
+#webcam,#uploadedPhoto{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+}
+#webcam{transform:scaleX(-1)}
+#uploadedPhoto{object-position:top center;display:none}
+#arCanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4}
+
+.silhouette-guide{
+  position:absolute;inset:0;z-index:5;pointer-events:none;
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;transition:opacity .25s;
+}
+.silhouette-guide.show{opacity:.8}
+.silhouette-guide svg{width:78%;height:85%}
+
+.cam-fallback{
+  position:absolute;inset:0;z-index:8;display:none;flex-direction:column;
+  align-items:center;justify-content:center;gap:12px;padding:24px;
+  text-align:center;background:rgba(22,22,26,.92);color:#fff;font-size:12px;
+}
+.cam-fallback.show{display:flex}
+.cam-fallback button{
+  padding:7px 16px;border-radius:999px;background:#fff;color:var(--ink);font-weight:600;
+}
+
+.status-pill{
+  position:absolute;left:50%;bottom:12px;transform:translateX(-50%);z-index:10;
+  padding:5px 14px;border-radius:999px;background:rgba(22,22,26,.82);
+  backdrop-filter:blur(8px);color:#fff;font-size:11px;font-weight:500;white-space:nowrap;
+}
+
+.fit-bar{
+  padding:10px 16px;background:#fcfbf8;border-bottom:1px solid var(--line);
+}
+.fit-bar-top{display:flex;justify-content:space-between;align-items:center}
+.fit-toggle{font-size:12px;font-weight:500;color:var(--ink)}
+.fit-toggle:hover{color:var(--accent)}
+.pts-toggle{font-size:11px;font-weight:500;color:var(--mut)}
+.pts-toggle.on{color:var(--ok);text-decoration:underline}
+
+.fit-controls{
+  display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);
+  font-size:12px;flex-direction:column;gap:10px;
+}
+.fit-controls.open{display:flex}
+.fit-row{display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--mut)}
+.fit-row input[type=range]{width:130px;accent-color:var(--ink)}
+.sz-pills{display:flex;gap:4px}
+.sz-pill{
+  padding:2px 8px;border-radius:6px;border:1px solid var(--line);background:#fff;
+  font-size:11px;font-weight:500;color:var(--ink);
+}
+.sz-pill.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.reset-fit{align-self:flex-start;font-size:11px;color:var(--mut);text-decoration:underline}
+
+.mirror-footer{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;
+}
+.mirror-footer b{display:block;font-size:14px;font-weight:600}
+.mirror-footer small{font-size:12px;color:var(--mut)}
+.bag-cta{
+  padding:8px 18px;border-radius:999px;background:var(--ink);color:#fff;
+  font-size:12px;font-weight:600;white-space:nowrap;transition:background .2s;
+}
+.bag-cta:hover{background:var(--accent)}
+
+.toast{
+  position:fixed;right:24px;bottom:24px;background:var(--ink);color:#fff;
+  padding:10px 18px;border-radius:20px;font-size:12px;
+  opacity:0;pointer-events:none;transition:.25s;z-index:60;
+}
+.toast.o{opacity:1}
+
+@media(max-width:980px){
+  .studio-shell.with-mirror{grid-template-columns:1fr}
+  .mirror-panel{position:static}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="{% url 'home' %}" class="logo">tread</a>
+  <nav>
+    <a href="{% url 'home' %}">Home</a>
+    <a href="{% url 'looks' %}">Looks</a>
+    <a href="{% url 'new_in' %}">New in</a>
+    <a href="{% url 'studio' %}" class="active">Studio</a>
+    <a href="{% url 'bag' %}" class="bagbtn">Bag <b id="cnt">0</b></a>
+  </nav>
+</header>
+
+<section class="hero-intro">
+  <small>Live Virtual Fitting Room</small>
+  <h1>Try it on yourself, on this page.</h1>
+  <p>Select <b>Try On</b> on any garment to launch real-time shoulder &amp; arm-tracked fitting using your camera or a personal photo.</p>
+</section>
+
+<main class="studio-shell" id="studioShell">
+  <div class="garment-grid" id="garmentGrid"></div>
+
+  <aside class="mirror-panel" id="mirrorPanel" aria-label="Live Virtual Try-On Mirror">
+    <div class="mirror-head">
+      <span>&#10024; Virtual Fitting Room</span>
+      <button type="button" class="mirror-close" id="closeMirrorBtn" aria-label="Close try-on">&times;</button>
+    </div>
+
+    <div class="mode-tabs">
+      <button type="button" class="mode-btn on" id="modeCamBtn">Camera</button>
+      <button type="button" class="mode-btn" id="modePhotoBtn">Upload Photo</button>
+      <input type="file" id="photoFileInput" accept="image/*" hidden>
+    </div>
+
+    <div class="mirror-viewport">
+      <video id="webcam" autoplay playsinline muted></video>
+      <img id="uploadedPhoto" alt="Uploaded try-on subject">
+      <canvas id="arCanvas"></canvas>
+
+      <div class="silhouette-guide" id="silhouetteGuide">
+        <svg viewBox="0 0 200 240" preserveAspectRatio="xMidYMax meet">
+          <path d="M100,28 C83,28 70,42 70,60 C70,74 78,86 89,90 L89,102 C62,107 40,122 34,152 L22,240 L178,240 L166,152 C160,122 138,107 111,102 L111,90 C122,86 130,74 130,60 C130,42 117,28 100,28 Z"
+                fill="rgba(255,255,255,0.16)" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-dasharray="4 4"/>
+        </svg>
+      </div>
+
+      <div class="cam-fallback" id="camFallback">
+        <p id="camFallbackMsg">Live camera requires HTTPS (or localhost) with camera access enabled.</p>
+        <button type="button" id="fallbackUploadBtn">Upload a Photo Instead</button>
+      </div>
+
+      <div class="status-pill" id="statusPill">Initializing body tracker...</div>
+    </div>
+
+    <div class="fit-bar">
+      <div class="fit-bar-top">
+        <button type="button" class="fit-toggle" id="fitToggleBtn">Adjust fit &amp; size</button>
+        <button type="button" class="pts-toggle" id="ptsToggleBtn">Track points</button>
+      </div>
+      <div class="fit-controls" id="fitControls">
+        <div class="fit-row">
+          <span>Size Drape</span>
+          <div class="sz-pills" id="sizePills">
+            <button type="button" class="sz-pill" data-sz="S">S</button>
+            <button type="button" class="sz-pill on" data-sz="M">M</button>
+            <button type="button" class="sz-pill" data-sz="L">L</button>
+            <button type="button" class="sz-pill" data-sz="XL">XL</button>
+          </div>
+        </div>
+        <label class="fit-row">
+          <span>Width Scale (<b id="scaleVal">100%</b>)</span>
+          <input type="range" id="scaleSlider" min="0.75" max="1.35" step="0.02" value="1">
+        </label>
+        <label class="fit-row">
+          <span>Collar Offset (<b id="offsetVal">0px</b>)</span>
+          <input type="range" id="offsetSlider" min="-45" max="45" step="2" value="0">
+        </label>
+        <button type="button" class="reset-fit" id="resetFitBtn">Reset calibration</button>
+      </div>
+    </div>
+
+    <div class="mirror-footer">
+      <div>
+        <b id="mirrorTitle">Varsity Jacket</b>
+        <small id="mirrorSub">Black / Cream &middot; Size M &middot; $168</small>
+      </div>
+      <button type="button" class="bag-cta" id="mirrorBagBtn">Add to Bag</button>
+    </div>
+  </aside>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { FilesetResolver, PoseLandmarker } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.2.3/+esm';
+
+const IMG_BASE = "{% static 'images/' %}";
+const SIZE_SCALE = { S: 0.94, M: 1.0, L: 1.06, XL: 1.12 };
+
+const ITEMS = [
+  { id: 'r4', name: 'Varsity Jacket', price: 168, silhouette: 'jacket', colIdx: 0, colors: [
+    { n: 'Black / Cream', h: '#17171a', a: '#efe6d3', img: 'rack4-1.png' },
+    { n: 'Navy / Cream', h: '#1f2c4a', a: '#efe6d3', img: 'rack4-2.png' },
+    { n: 'Green / Cream', h: '#24503a', a: '#efe6d3', img: 'rack4-3.png' }
+  ]},
+  { id: 'r1', name: 'Memory Long Sleeve', price: 88, silhouette: 'long', colIdx: 0, colors: [
+    { n: 'White', h: '#f4f1ea', a: '#c23a3a', img: 'rack1-1.png' },
+    { n: 'Cream', h: '#e9dcc4', a: '#8a2f2f', img: 'rack1-2.png' },
+    { n: 'Sky', h: '#bcd3e8', a: '#35507a', img: 'rack1-3.png' }
+  ]},
+  { id: 'r3', name: 'Stonewash Overshirt', price: 112, silhouette: 'long', colIdx: 0, colors: [
+    { n: 'Charcoal', h: '#4b4d52', a: '#2b2c30', img: 'rack3-1.png' },
+    { n: 'Ash', h: '#8d8f94', a: '#55575c', img: 'rack3-2.png' }
+  ]},
+  { id: 'r2', name: 'It’s Us Never Them Tee', price: 62, silhouette: 'tee', colIdx: 0, colors: [
+    { n: 'Black', h: '#1d1d20', a: '#f2eee6', img: 'rack2-1.png' },
+    { n: 'Pink', h: '#f0a3b8', a: '#1d1d20', img: 'rack2-2.png' },
+    { n: 'Yellow', h: '#f2d11a', a: '#1d1d20', img: 'rack2-3.png' }
+  ]},
+  { id: 'r5', name: 'Chambray Work Shirt', price: 94, silhouette: 'long', colIdx: 0, colors: [
+    { n: 'Blue', h: '#8fb0d4', a: '#5b7fa8', img: 'rack5-1.png' },
+    { n: 'Indigo', h: '#44566f', a: '#2c3a50', img: 'rack5-2.png' }
+  ]},
+  { id: 'r6', name: 'Snug Football Jersey', price: 78, silhouette: 'long', colIdx: 0, colors: [
+    { n: 'Yellow', h: '#e2a921', a: '#1f6a43', img: 'rack6-1.png' },
+    { n: 'Blue', h: '#2447c8', a: '#f2c40f', img: 'rack6-2.png' }
+  ]},
+  { id: 'r7', name: 'Essential Heavy Tee', price: 48, silhouette: 'tee', colIdx: 0, colors: [
+    { n: 'White', h: '#f6f4ef', a: '#d9d4c8', img: 'rack7-1.png' },
+    { n: 'Sand', h: '#d8c9ac', a: '#b8a888', img: 'rack7-2.png' },
+    { n: 'Black', h: '#1d1d20', a: '#3a3a40', img: 'rack7-3.png' }
+  ]}
+];
+
+const PHOTO_LAYOUT_SPECS = {
+  r4: {
+    torsoRect: [0.21, 0.0, 0.79, 0.97], shoulderYRatio: 0.13,
+    leftUpper:   { start: [0.195, 0.16], end: [0.125, 0.52], halfW: 0.088 },
+    leftForearm: { start: [0.125, 0.52], end: [0.098, 0.95], halfW: 0.080 },
+    rightUpper:  { start: [0.805, 0.16], end: [0.875, 0.52], halfW: 0.088 },
+    rightForearm:{ start: [0.875, 0.52], end: [0.902, 0.95], halfW: 0.080 }
+  },
+  r3: {
+    torsoRect: [0.20, 0.0, 0.80, 0.985], shoulderYRatio: 0.12, cleanFoldedCuffs: true,
+    leftUpper:   { start: [0.205, 0.16], end: [0.098, 0.44], halfW: 0.072 },
+    leftForearm: { start: [0.098, 0.44], end: [0.288, 0.70], halfW: 0.062 },
+    rightUpper:  { start: [0.795, 0.16], end: [0.902, 0.44], halfW: 0.072 },
+    rightForearm:{ start: [0.902, 0.44], end: [0.712, 0.70], halfW: 0.062 }
+  },
+  r5: {
+    torsoRect: [0.21, 0.0, 0.79, 0.985], shoulderYRatio: 0.11, cleanFoldedCuffs: true,
+    leftUpper:   { start: [0.205, 0.16], end: [0.098, 0.46], halfW: 0.070 },
+    leftForearm: { start: [0.098, 0.46], end: [0.278, 0.72], halfW: 0.062 },
+    rightUpper:  { start: [0.795, 0.16], end: [0.902, 0.46], halfW: 0.070 },
+    rightForearm:{ start: [0.902, 0.46], end: [0.722, 0.72], halfW: 0.062 }
+  }
+};
+const DEFAULT_SPEC_LONG = {
+  torsoRect: [0.235, 0.0, 0.765, 1.0], shoulderYRatio: 0.09,
+  leftUpper:   { start: [0.228, 0.15], end: [0.065, 0.46], halfW: 0.075 },
+  leftForearm: { start: [0.065, 0.46], end: [0.095, 0.90], halfW: 0.070 },
+  rightUpper:  { start: [0.772, 0.15], end: [0.935, 0.46], halfW: 0.075 },
+  rightForearm:{ start: [0.935, 0.46], end: [0.905, 0.90], halfW: 0.070 }
+};
+const DEFAULT_SPEC_TEE = {
+  torsoRect: [0.235, 0.0, 0.765, 1.0], shoulderYRatio: 0.09,
+  leftUpper:  { start: [0.228, 0.10], end: [0.065, 0.32], halfW: 0.080 },
+  leftForearm:{ start: [0.228, 0.10], end: [0.065, 0.32], halfW: 0.080 },
+  rightUpper: { start: [0.772, 0.10], end: [0.935, 0.32], halfW: 0.080 },
+  rightForearm:{start: [0.772, 0.10], end: [0.935, 0.32], halfW: 0.080 }
+};
+
+const assetCache = new Map();
+const cardUrls = {};
+let activeTryIdx = -1;
+let activeSize = 'M';
+let fitScale = 1.0;
+let verticalOffset = 0;
+let showGuides = false;
+let currentMode = 'camera';
+
+function cropTransparentCanvas(c) {
+  const w = c.width, h = c.height;
+  const p = c.getContext('2d').getImageData(0, 0, w, h).data;
+  let x0 = w, y0 = h, x1 = 0, y1 = 0;
+  for (let q = 0; q < w * h; q++) {
+    if (p[q * 4 + 3] > 30) {
+      const qx = q % w, qy = (q / w) | 0;
+      if (qx < x0) x0 = qx; if (qx > x1) x1 = qx;
+      if (qy < y0) y0 = qy; if (qy > y1) y1 = qy;
+    }
+  }
+  if (x1 <= x0 || y1 <= y0) return c;
+  const cw = x1 - x0 + 1, ch = y1 - y0 + 1;
+  const out = document.createElement('canvas');
+  out.width = cw; out.height = ch;
+  out.getContext('2d').drawImage(c, x0, y0, cw, ch, 0, 0, cw, ch);
+  return out;
+}
+
+function keyWhiteBackdrop(im) {
+  const maxH = 900;
+  const scale = Math.min(1, maxH / Math.max(1, im.naturalHeight));
+  const w = Math.max(1, Math.round(im.naturalWidth * scale));
+  const h = Math.max(1, Math.round(im.naturalHeight * scale));
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  const ctx = c.getContext('2d');
+  ctx.drawImage(im, 0, 0, w, h);
+
+  const imgData = ctx.getImageData(0, 0, w, h);
+  const p = imgData.data;
+
+  // Remove wooden hanger & wire hook in top band
+  const hangerZone = Math.round(h * 0.24);
+  const hookMinX = Math.round(w * 0.45), hookMaxX = Math.round(w * 0.55);
+  for (let y = 0; y < hangerZone; y++) {
+    for (let x = 0; x < w; x++) {
+      const idx = (y * w + x) * 4;
+      const r = p[idx], g = p[idx + 1], b = p[idx + 2];
+      const isWood = r > 105 && g > 65 && g < r * 0.88 && r > b + 18;
+      const isHook = y < h * 0.14 && x > hookMinX && x < hookMaxX;
+      if (p[idx + 3] > 0 && (isWood || isHook)) p[idx + 3] = 0;
+    }
+  }
+
+  const isBg = (j) => {
+    const r = p[j], g = p[j + 1], b = p[j + 2];
+    const mn = Math.min(r, g, b), mx = Math.max(r, g, b);
+    return p[j + 3] === 0 || (mn >= 224 && mx - mn <= 22) || (mn >= 196 && mx - mn <= 11);
+  };
+
+  const seen = new Uint8Array(w * h);
+  const stack = new Int32Array(w * h);
+  let sp = 0;
+  const push = (idx) => {
+    if (!seen[idx] && isBg(idx * 4)) { seen[idx] = 1; stack[sp++] = idx; }
+  };
+  for (let x = 0; x < w; x++) { push(x); push((h - 1) * w + x); }
+  for (let y = 0; y < h; y++) { push(y * w); push(y * w + w - 1); }
+
+  while (sp > 0) {
+    const q = stack[--sp], cx = q % w;
+    if (cx > 0) push(q - 1);
+    if (cx < w - 1) push(q + 1);
+    if (q >= w) push(q - w);
+    if (q < w * (h - 1)) push(q + w);
+  }
+
+  for (let q = 0; q < w * h; q++) {
+    const j = q * 4;
+    if (seen[q]) p[j + 3] = 0;
+    else {
+      const cx = q % w;
+      const onEdge = (cx > 0 && seen[q - 1]) || (cx < w - 1 && seen[q + 1]) ||
+                     (q >= w && seen[q - w]) || (q < w * (h - 1) && seen[q + w]);
+      if (onEdge) p[j + 3] = Math.round(p[j + 3] * 0.65);
+    }
+  }
+  ctx.putImageData(imgData, 0, 0);
+  return cropTransparentCanvas(c);
+}
+
+function extractStraightenedSleeveSegment(fullCanvas, start, end, halfW) {
+  const fw = fullCanvas.width, fh = fullCanvas.height;
+  const sx = start[0] * fw, sy = start[1] * fh;
+  const ex = end[0] * fw, ey = end[1] * fh;
+  const dx = ex - sx, dy = ey - sy;
+  const segLen = Math.max(24, Math.round(Math.hypot(dx, dy)));
+  const segW = Math.max(20, Math.round(halfW * 2 * fw));
+  const ang = Math.atan2(dy, dx);
+
+  const out = document.createElement('canvas');
+  out.width = segW; out.height = segLen;
+  const ctx = out.getContext('2d');
+  ctx.save();
+  ctx.translate(segW * 0.5, 0);
+  ctx.rotate(Math.PI * 0.5 - ang);
+  ctx.translate(-sx, -sy);
+  ctx.drawImage(fullCanvas, 0, 0);
+  ctx.restore();
+
+  ctx.save();
+  ctx.globalCompositeOperation = 'destination-in';
+  const hGrad = ctx.createLinearGradient(0, 0, segW, 0);
+  hGrad.addColorStop(0, 'rgba(0,0,0,0)');
+  hGrad.addColorStop(0.1, 'rgba(0,0,0,1)');
+  hGrad.addColorStop(0.9, 'rgba(0,0,0,1)');
+  hGrad.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = hGrad;
+  ctx.fillRect(0, 0, segW, segLen);
+  ctx.restore();
+  return out;
+}
+
+function cleanFoldedCuffsFromTorso(torsoCanvas) {
+  const tw = torsoCanvas.width, th = torsoCanvas.height;
+  const ctx = torsoCanvas.getContext('2d');
+  const sampleX = Math.round(tw * 0.36), sampleY = Math.round(th * 0.52);
+  const sampleW = Math.max(8, Math.round(tw * 0.12)), sampleH = Math.max(8, Math.round(th * 0.16));
+
+  const fillRegion = (poly, xStart, xEnd) => {
+    ctx.save();
+    ctx.beginPath();
+    poly.forEach(([px, py], i) => (i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py)));
+    ctx.closePath();
+    ctx.clip();
+    for (let y = Math.round(th * 0.48); y < th * 0.94; y += sampleH) {
+      for (let x = xStart; x < xEnd; x += sampleW) {
+        ctx.drawImage(torsoCanvas, sampleX, sampleY, sampleW, sampleH, x, y, sampleW + 1, sampleH + 1);
+      }
+    }
+    ctx.restore();
+  };
+  fillRegion([[0, th * 0.5], [tw * 0.32, th * 0.65], [tw * 0.3, th * 0.86], [0, th * 0.92]], 0, Math.round(tw * 0.34));
+  fillRegion([[tw, th * 0.5], [tw * 0.68, th * 0.65], [tw * 0.7, th * 0.86], [tw, th * 0.92]], Math.round(tw * 0.66), tw);
+}
+
+function sliceTorsoAndSleeves(fullCanvas, spec) {
+  const fw = fullCanvas.width, fh = fullCanvas.height;
+  const [rx0, ry0, rx1, ry1] = spec.torsoRect;
+  const tx = Math.round(fw * rx0), ty = Math.round(fh * ry0);
+  const tw = Math.max(1, Math.round(fw * (rx1 - rx0))), th = Math.max(1, Math.round(fh * (ry1 - ry0)));
+
+  const torsoCanvas = document.createElement('canvas');
+  torsoCanvas.width = tw; torsoCanvas.height = th;
+  const tctx = torsoCanvas.getContext('2d');
+  tctx.drawImage(fullCanvas, tx, ty, tw, th, 0, 0, tw, th);
+  if (spec.cleanFoldedCuffs) cleanFoldedCuffsFromTorso(torsoCanvas);
+
+  const tData = tctx.getImageData(0, 0, tw, th).data;
+  let minOpaqueX = tw, maxOpaqueX = 0;
+  const yStart = Math.round(th * Math.min(0.6, spec.shoulderYRatio + 0.08));
+  const yEnd = Math.round(th * Math.min(0.7, spec.shoulderYRatio + 0.25));
+  for (let y = yStart; y < yEnd; y++) {
+    for (let x = 0; x < tw; x++) {
+      if (tData[(y * tw + x) * 4 + 3] > 80) {
+        if (x < minOpaqueX) minOpaqueX = x;
+        if (x > maxOpaqueX) maxOpaqueX = x;
+      }
+    }
+  }
+  const chestWidthRatio = maxOpaqueX > minOpaqueX ? Math.max(0.65, (maxOpaqueX - minOpaqueX) / tw) : 0.94;
+
+  tctx.globalCompositeOperation = 'destination-out';
+  const neckTopH = Math.max(8, Math.round(th * (spec.shoulderYRatio + 0.055)));
+  const neckGrad = tctx.createRadialGradient(tw * 0.5, 0, tw * 0.07, tw * 0.5, 0, tw * 0.21);
+  neckGrad.addColorStop(0, 'rgba(0,0,0,1)');
+  neckGrad.addColorStop(0.72, 'rgba(0,0,0,0.92)');
+  neckGrad.addColorStop(1, 'rgba(0,0,0,0)');
+  tctx.fillStyle = neckGrad;
+  tctx.beginPath();
+  tctx.ellipse(tw * 0.5, 0, tw * 0.21, neckTopH, 0, 0, Math.PI);
+  tctx.fill();
+  tctx.globalCompositeOperation = 'source-over';
+
+  // Shoulder anchor data in full-garment canvas (normalized 0-1)
+  // leftUpper.start[0] ≈ x of left shoulder seam, rightUpper.start[0] ≈ x of right shoulder seam
+  const shL = spec.leftUpper ? spec.leftUpper.start[0] : 0.228;
+  const shR = spec.rightUpper ? spec.rightUpper.start[0] : 0.772;
+  const shY = spec.leftUpper ? spec.leftUpper.start[1] : spec.shoulderYRatio;
+  const shoulderSpanX = Math.max(0.3, shR - shL);   // fraction of full canvas width
+  const shoulderAnchorY = shY;                        // fraction of full canvas height
+
+  return {
+    fullUrl: fullCanvas.toDataURL('image/png'),
+    fullCanvas,            // ← full cleaned canvas (hanger+bg removed)
+    torsoX: tx, torsoY: ty,  // torso crop origin inside the full canvas (px)
+    shoulderSpanX,         // fraction of full canvas width between shoulder seams
+    shoulderAnchorY,       // fraction of full canvas height where shoulder line sits
+    torsoCanvas,
+    leftUpperCanvas: extractStraightenedSleeveSegment(fullCanvas, spec.leftUpper.start, spec.leftUpper.end, spec.leftUpper.halfW),
+    leftForearmCanvas: extractStraightenedSleeveSegment(fullCanvas, spec.leftForearm.start, spec.leftForearm.end, spec.leftForearm.halfW),
+    rightUpperCanvas: extractStraightenedSleeveSegment(fullCanvas, spec.rightUpper.start, spec.rightUpper.end, spec.rightUpper.halfW),
+    rightForearmCanvas: extractStraightenedSleeveSegment(fullCanvas, spec.rightForearm.start, spec.rightForearm.end, spec.rightForearm.halfW),
+    shoulderYRatio: spec.shoulderYRatio,
+    chestWidthRatio
+  };
+}
+
+function drawProceduralGarmentCanvas(item, col) {
+  const w = 560, h = 680;
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  const ctx = c.getContext('2d');
+  ctx.save(); ctx.scale(w / 200, h / 250);
+  const isLong = item.silhouette !== 'tee';
+  const sleeveColor = item.silhouette === 'jacket' ? col.a : col.h;
+
+  ctx.beginPath();
+  ctx.moveTo(64, 34); ctx.quadraticCurveTo(100, 50, 136, 34);
+  ctx.lineTo(148, 42); ctx.lineTo(144, 104); ctx.lineTo(144, 228);
+  ctx.lineTo(56, 228); ctx.lineTo(56, 104); ctx.lineTo(52, 42);
+  ctx.closePath(); ctx.fillStyle = col.h; ctx.fill();
+
+  const drawArm = (pts) => {
+    ctx.beginPath();
+    pts.forEach(([x, y], i) => (i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)));
+    ctx.closePath(); ctx.fillStyle = sleeveColor; ctx.fill();
+  };
+  if (isLong) {
+    drawArm([[54, 42], [16, 78], [22, 212], [44, 212], [56, 104]]);
+    drawArm([[146, 42], [184, 78], [178, 212], [156, 212], [144, 104]]);
+  } else {
+    drawArm([[54, 42], [14, 74], [26, 106], [56, 96]]);
+    drawArm([[146, 42], [186, 74], [174, 106], [144, 96]]);
+  }
+  ctx.restore();
+  return cropTransparentCanvas(c);
+}
+
+async function prepareGarmentAsset(item, colIdx) {
+  const col = item.colors[colIdx];
+  const key = `${item.id}-${colIdx}-${col.img}`;
+  if (assetCache.has(key)) return assetCache.get(key);
+
+  const exts = ['png', 'webp', 'jpg', 'jpeg'];
+  const base = col.img.replace(/\.[^.]+$/, '');
+  const tryLoad = (url) => new Promise((res, rej) => {
+    const im = new Image();
+    im.crossOrigin = 'anonymous';
+    im.onload = () => res(im);
+    im.onerror = rej;
+    im.src = url;
+  });
+
+  let loadedImg = null;
+  for (const ext of [col.img.split('.').pop(), ...exts]) {
+    try { loadedImg = await tryLoad(`${IMG_BASE}${base}.${ext}`); break; } catch {}
+  }
+
+  const keyed = loadedImg ? keyWhiteBackdrop(loadedImg) : drawProceduralGarmentCanvas(item, col);
+  const spec = PHOTO_LAYOUT_SPECS[item.id] || (item.silhouette === 'tee' ? DEFAULT_SPEC_TEE : DEFAULT_SPEC_LONG);
+  const asset = sliceTorsoAndSleeves(keyed, spec);
+  cardUrls[col.img] = asset.fullUrl;
+  assetCache.set(key, asset);
+  return asset;
+}
+
+/* ---------- Subdivided Quad Mesh & Connected Sleeve Renderer ---------- */
+let workCanvas = null;
+function getWorkCanvas(W, H) {
+  if (!workCanvas) workCanvas = document.createElement('canvas');
+  if (workCanvas.width !== W || workCanvas.height !== H) { workCanvas.width = W; workCanvas.height = H; }
+  return workCanvas;
+}
+const lerpPt = (a, b, t) => ({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t });
+
+function drawTexturedTriangle(ctx, tex, x0, y0, x1, y1, x2, y2, u0, v0, u1, v1, u2, v2) {
+  const denom = u0 * (v1 - v2) + u1 * (v2 - v0) + u2 * (v0 - v1);
+  if (Math.abs(denom) < 1e-4) return;
+  const cx = (x0 + x1 + x2) / 3, cy = (y0 + y1 + y2) / 3;
+  const exp = (px, py) => {
+    const dx = px - cx, dy = py - cy, l = Math.hypot(dx, dy) || 1;
+    return [px + (dx / l) * 0.75, py + (dy / l) * 0.75];
+  };
+  const [ex0, ey0] = exp(x0, y0), [ex1, ey1] = exp(x1, y1), [ex2, ey2] = exp(x2, y2);
+  ctx.save();
+  ctx.beginPath(); ctx.moveTo(ex0, ey0); ctx.lineTo(ex1, ey1); ctx.lineTo(ex2, ey2); ctx.closePath(); ctx.clip();
+  const m11 = (x0 * (v1 - v2) + x1 * (v2 - v0) + x2 * (v0 - v1)) / denom;
+  const m12 = (x0 * (u2 - u1) + x1 * (u0 - u2) + x2 * (u1 - u0)) / denom;
+  const m21 = (y0 * (v1 - v2) + y1 * (v2 - v0) + y2 * (v0 - v1)) / denom;
+  const m22 = (y0 * (u2 - u1) + y1 * (u0 - u2) + y2 * (u1 - u0)) / denom;
+  const dx = (x0 * (u1 * v2 - u2 * v1) + x1 * (u2 * v0 - u0 * v2) + x2 * (u0 * v1 - u1 * v0)) / denom;
+  const dy = (y0 * (u1 * v2 - u2 * v1) + y1 * (u2 * v0 - u0 * v2) + y2 * (u0 * v1 - u1 * v0)) / denom;
+  ctx.transform(m11, m21, m12, m22, dx, dy);
+  ctx.drawImage(tex, 0, 0);
+  ctx.restore();
+}
+
+function drawWarpedQuadMesh(ctx, tex, tl, tr, bl, br, cols = 6, rows = 6, collarDipX = 0, collarDipY = 0) {
+  const tw = tex.width, th = tex.height;
+  const sampleDest = (u, v) => {
+    const bell = 4 * u * (1 - u) * Math.max(0, 1 - v / 0.35);
+    const tx = tl.x + (tr.x - tl.x) * u + collarDipX * bell;
+    const ty = tl.y + (tr.y - tl.y) * u + collarDipY * bell;
+    const bx = bl.x + (br.x - bl.x) * u;
+    const by = bl.y + (br.y - bl.y) * u;
+    return { x: tx + (bx - tx) * v, y: ty + (by - ty) * v };
+  };
+  for (let r = 0; r < rows; r++) {
+    const v0 = r / rows, v1 = (r + 1) / rows;
+    for (let c = 0; c < cols; c++) {
+      const u0 = c / cols, u1 = (c + 1) / cols;
+      const p00 = sampleDest(u0, v0), p10 = sampleDest(u1, v0), p01 = sampleDest(u0, v1), p11 = sampleDest(u1, v1);
+      drawTexturedTriangle(ctx, tex, p00.x, p00.y, p10.x, p10.y, p11.x, p11.y, u0 * tw, v0 * th, u1 * tw, v0 * th, u1 * tw, v1 * th);
+      drawTexturedTriangle(ctx, tex, p00.x, p00.y, p11.x, p11.y, p01.x, p01.y, u0 * tw, v0 * th, u1 * tw, v1 * th, u0 * tw, v1 * th);
+    }
+  }
+}
+
+function drawConnectedSleeve(ctx, upperTex, forearmTex, shoulderSeam, armpit, elbow, wrist, armHalfW, isLeft, isShort, shoulderW, shoulderMid, viewH, elbowVisible) {
+  const armOrigin = lerpPt(shoulderSeam, armpit, 0.45);
+  const rawDx = elbow.x - armOrigin.x, rawDy = elbow.y - armOrigin.y;
+  const rawLen = Math.hypot(rawDx, rawDy);
+  if (rawLen < 8) return;
+  const ux = rawDx / rawLen, uy = rawDy / rawLen;
+  const clampedLen = Math.max(armHalfW * 0.9, Math.min(rawLen, shoulderW * 1.05));
+  const cElb = { x: armOrigin.x + ux * clampedLen, y: armOrigin.y + uy * clampedLen };
+
+  const seamX = isLeft ? shoulderSeam.x - armpit.x : armpit.x - shoulderSeam.x;
+  const seamY = isLeft ? shoulderSeam.y - armpit.y : armpit.y - shoulderSeam.y;
+  let px = -uy, py = ux;
+  if (px * seamX + py * seamY < 0) { px = uy; py = -ux; }
+
+  const elbR = armHalfW * 0.92;
+  const elbA = { x: cElb.x + px * elbR, y: cElb.y + py * elbR };
+  const elbB = { x: cElb.x - px * elbR, y: cElb.y - py * elbR };
+
+  if (isShort) {
+    const midElb = lerpPt(armOrigin, cElb, 0.56);
+    const sA = { x: midElb.x + px * (armHalfW * 0.94), y: midElb.y + py * (armHalfW * 0.94) };
+    const sB = { x: midElb.x - px * (armHalfW * 0.94), y: midElb.y - py * (armHalfW * 0.94) };
+    drawWarpedQuadMesh(ctx, upperTex, isLeft ? shoulderSeam : armpit, isLeft ? armpit : shoulderSeam, sA, sB, 3, 4);
+    return;
+  }
+
+  drawWarpedQuadMesh(ctx, upperTex, isLeft ? shoulderSeam : armpit, isLeft ? armpit : shoulderSeam, elbA, elbB, 3, 4);
+
+  const elbowClipped = !elbowVisible || cElb.y > viewH * 0.95;
+  const wristAcrossBody = wrist.y < shoulderMid.y + shoulderW * 0.18 && Math.abs(wrist.x - shoulderMid.x) < shoulderW * 0.48;
+  if (elbowClipped || wristAcrossBody) return;
+
+  const fDx = wrist.x - cElb.x, fDy = wrist.y - cElb.y;
+  const rawFLen = Math.hypot(fDx, fDy);
+  if (rawFLen < 8) return;
+  const targetLen = Math.max(armHalfW * 1.2, Math.min(rawFLen * 0.95, shoulderW * 0.98));
+  const cWr = { x: cElb.x + (fDx / rawFLen) * targetLen, y: cElb.y + (fDy / rawFLen) * targetLen };
+  const fx = (cWr.x - cElb.x) / targetLen, fy = (cWr.y - cElb.y) / targetLen;
+  let fpx = -fy, fpy = fx;
+  if (fpx * (elbA.x - elbB.x) + fpy * (elbA.y - elbB.y) < 0) { fpx = fy; fpy = -fx; }
+
+  const wrR = armHalfW * 0.84;
+  drawWarpedQuadMesh(ctx, forearmTex, elbA, elbB,
+    { x: cWr.x + fpx * wrR, y: cWr.y + fpy * wrR },
+    { x: cWr.x - fpx * wrR, y: cWr.y - fpy * wrR }, 3, 4);
+}
+
+/* ---------- Pose State & Tracking Loop ---------- */
+const fitState = {
+  ready: false, tooClose: false,
+  nose: { x: 0.5, y: 0.2, z: 0, v: 1 },
+  ls: { x: 0.36, y: 0.34, z: 0, v: 1 }, rs: { x: 0.64, y: 0.34, z: 0, v: 1 },
+  le: { x: 0.28, y: 0.56, z: 0, v: 1 }, re: { x: 0.72, y: 0.56, z: 0, v: 1 },
+  lw: { x: 0.25, y: 0.74, z: 0, v: 1 }, rw: { x: 0.75, y: 0.74, z: 0, v: 1 },
+  lh: { x: 0.4, y: 0.72, z: 0, v: 1 }, rh: { x: 0.6, y: 0.72, z: 0, v: 1 },
+  lHand: { x: 0.25, y: 0.78, z: 0, v: 0 }, rHand: { x: 0.75, y: 0.78, z: 0, v: 0 },
+  lPinky: { x: 0.25, y: 0.78, z: 0, v: 0 }, rPinky: { x: 0.75, y: 0.78, z: 0, v: 0 },
+  lThumb: { x: 0.25, y: 0.78, z: 0, v: 0 }, rThumb: { x: 0.75, y: 0.78, z: 0, v: 0 }
+};
+
+function smoothPoint(t, nx, ny, nz, nv, deadband, slowA, fastA) {
+  const dist = Math.hypot(nx - t.x, ny - t.y);
+  if (dist < deadband) { t.v = nv; t.z += (nz - t.z) * slowA; return; }
+  const a = dist > 0.03 ? fastA : slowA;
+  t.x += (nx - t.x) * a; t.y += (ny - t.y) * a; t.z += (nz - t.z) * a; t.v = nv;
+}
+
+const videoEl = document.getElementById('webcam');
+const photoEl = document.getElementById('uploadedPhoto');
+const canvasEl = document.getElementById('arCanvas');
+const ctx = canvasEl.getContext('2d');
+const statusPill = document.getElementById('statusPill');
+const silGuide = document.getElementById('silhouetteGuide');
+
+let poseLandmarker = null;
+let runningMode = 'VIDEO';
+let modeSwitchPromise = null;
+let cameraStream = null;
+
+async function ensureRunningMode(target) {
+  if (!poseLandmarker) return false;
+  if (runningMode === target) return true;
+  if (modeSwitchPromise) { await modeSwitchPromise; return runningMode === target; }
+  modeSwitchPromise = poseLandmarker.setOptions({ runningMode: target })
+    .then(() => { runningMode = target; })
+    .finally(() => { modeSwitchPromise = null; });
+  await modeSwitchPromise;
+  return runningMode === target;
+}
+
+async function initLandmarker() {
+  if (poseLandmarker) return poseLandmarker;
+  statusPill.textContent = 'Loading pose tracker...';
+  const vision = await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.2.3/wasm');
+  poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
+    baseOptions: {
+      modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task',
+      delegate: 'GPU'
+    },
+    runningMode: 'VIDEO',
+    numPoses: 1,
+    minPoseDetectionConfidence: 0.45,
+    minPosePresenceConfidence: 0.45,
+    minTrackingConfidence: 0.48,
+    outputSegmentationMasks: false
+  });
+  runningMode = 'VIDEO';
+  statusPill.textContent = 'Stand in view to fit garment';
+  return poseLandmarker;
+}
+
+function applyLandmarks(lm, mirrored, srcW, srcH, viewW, viewH) {
+  if (!lm || lm.length < 25) {
+    fitState.ready = false;
+    statusPill.textContent = 'Step back so shoulders are visible';
+    silGuide.classList.add('show');
+    return;
+  }
+  const toX = (x) => (mirrored ? 1 - x : x);
+  const mk = (p, fv = 0.5) => ({ x: toX(p.x), y: p.y, z: p.z ?? 0, v: p.visibility ?? fv });
+  const p11 = mk(lm[11], 0.9), p12 = mk(lm[12], 0.9);
+  if (p11.v < 0.18 && p12.v < 0.18) {
+    fitState.ready = false; statusPill.textContent = 'Step back so shoulders fit'; silGuide.classList.add('show'); return;
+  }
+
+  const nosePt = lm[0] ? mk(lm[0], 0.9) : { x: 0.5, y: 0.2, z: 0, v: 0 };
+  const leftIs11 = mirrored ? p11.x <= p12.x + 0.06 : p11.x < p12.x - 0.06;
+  let sL = leftIs11 ? p11 : p12, sR = leftIs11 ? p12 : p11;
+  const eL = mk(leftIs11 ? lm[13] : lm[14]), eR = mk(leftIs11 ? lm[14] : lm[13]);
+  const wL = mk(leftIs11 ? lm[15] : lm[16]), wR = mk(leftIs11 ? lm[16] : lm[15]);
+  const hL = mk(leftIs11 ? lm[23] : lm[24]), hR = mk(leftIs11 ? lm[24] : lm[23]);
+  const handL = mk(leftIs11 ? (lm[19] || lm[15]) : (lm[20] || lm[16]), 0);
+  const handR = mk(leftIs11 ? (lm[20] || lm[16]) : (lm[19] || lm[15]), 0);
+  const pinkyL = mk(leftIs11 ? (lm[17] || lm[15]) : (lm[18] || lm[16]), 0);
+  const pinkyR = mk(leftIs11 ? (lm[18] || lm[16]) : (lm[17] || lm[15]), 0);
+  const thumbL = mk(leftIs11 ? (lm[21] || lm[15]) : (lm[22] || lm[16]), 0);
+  const thumbR = mk(leftIs11 ? (lm[22] || lm[16]) : (lm[21] || lm[15]), 0);
+
+  const span = Math.hypot(sR.x - sL.x, sR.y - sL.y);
+  if (span < 0.05 || sR.x - sL.x < 0.03) {
+    fitState.ready = false; statusPill.textContent = 'Face the camera directly'; return;
+  }
+
+  const shDx = (sR.x - sL.x) / span, shDy = (sR.y - sL.y) / span;
+  const downX = -shDy, downY = shDx;
+  const hipsVis = hL.v > 0.65 && hR.v > 0.65 && hL.y > 0.15 && hL.y < 0.94 && hR.y > 0.15 && hR.y < 0.94;
+  const estLh = hipsVis ? hL : { x: sL.x + shDx * span * 0.06 + downX * span * 1.44, y: sL.y + shDy * span * 0.06 + downY * span * 1.44, z: sL.z, v: 0.4 };
+  const estRh = hipsVis ? hR : { x: sR.x - shDx * span * 0.06 + downX * span * 1.44, y: sR.y - shDy * span * 0.06 + downY * span * 1.44, z: sR.z, v: 0.4 };
+  const estLe = eL.v > 0.34 ? eL : { x: sL.x - shDx * span * 0.14 + downX * span * 0.78, y: sL.y - shDy * span * 0.14 + downY * span * 0.78, z: sL.z, v: eL.v };
+  const estRe = eR.v > 0.34 ? eR : { x: sR.x + shDx * span * 0.14 + downX * span * 0.78, y: sR.y + shDy * span * 0.14 + downY * span * 0.78, z: sR.z, v: eR.v };
+  const estLw = wL.v > 0.34 ? wL : { x: estLe.x - shDx * span * 0.05 + downX * span * 0.7, y: estLe.y - shDy * span * 0.05 + downY * span * 0.7, z: estLe.z, v: wL.v };
+  const estRw = wR.v > 0.34 ? wR : { x: estRe.x + shDx * span * 0.05 + downX * span * 0.7, y: estRe.y + shDy * span * 0.05 + downY * span * 0.7, z: estRe.z, v: wR.v };
+
+  const sc = Math.max(viewW / Math.max(1, srcW), viewH / Math.max(1, srcH));
+  const rW = srcW * sc, rH = srcH * sc;
+  const offX = (viewW - rW) / 2, offY = (viewH - rH) / 2;
+  const visSLx = (offX + sL.x * rW) / viewW, visSRx = (offX + sR.x * rW) / viewW;
+  const visShMaxY = (offY + Math.max(sL.y, sR.y) * rH) / viewH;
+  const offEdge = visSLx < 0.02 || visSRx > 0.98;
+  fitState.tooClose = mirrored && (visSRx - visSLx > 0.76 || visShMaxY > 0.88 || offEdge);
+
+  if (!fitState.ready) {
+    fitState.ready = true;
+    Object.assign(fitState, { nose: nosePt, ls: sL, rs: sR, le: estLe, re: estRe, lw: estLw, rw: estRw, lh: estLh, rh: estRh, lHand: handL, rHand: handR, lPinky: pinkyL, rPinky: pinkyR, lThumb: thumbL, rThumb: thumbR });
+  } else {
+    smoothPoint(fitState.nose, nosePt.x, nosePt.y, nosePt.z, nosePt.v, 0.005, 0.22, 0.45);
+    smoothPoint(fitState.ls, sL.x, sL.y, sL.z, sL.v, 0.006, 0.18, 0.4);
+    smoothPoint(fitState.rs, sR.x, sR.y, sR.z, sR.v, 0.006, 0.18, 0.4);
+    smoothPoint(fitState.lh, estLh.x, estLh.y, estLh.z, estLh.v, 0.007, 0.16, 0.36);
+    smoothPoint(fitState.rh, estRh.x, estRh.y, estRh.z, estRh.v, 0.007, 0.16, 0.36);
+    smoothPoint(fitState.le, estLe.x, estLe.y, estLe.z, estLe.v, 0.005, 0.32, 0.55);
+    smoothPoint(fitState.re, estRe.x, estRe.y, estRe.z, estRe.v, 0.005, 0.32, 0.55);
+    smoothPoint(fitState.lw, estLw.x, estLw.y, estLw.z, estLw.v, 0.005, 0.36, 0.58);
+    smoothPoint(fitState.rw, estRw.x, estRw.y, estRw.z, estRw.v, 0.005, 0.36, 0.58);
+    smoothPoint(fitState.lHand, handL.x, handL.y, handL.z, handL.v, 0.005, 0.45, 0.7);
+    smoothPoint(fitState.rHand, handR.x, handR.y, handR.z, handR.v, 0.005, 0.45, 0.7);
+    smoothPoint(fitState.lPinky, pinkyL.x, pinkyL.y, pinkyL.z, pinkyL.v, 0.005, 0.45, 0.7);
+    smoothPoint(fitState.rPinky, pinkyR.x, pinkyR.y, pinkyR.z, pinkyR.v, 0.005, 0.45, 0.7);
+    smoothPoint(fitState.lThumb, thumbL.x, thumbL.y, thumbL.z, thumbL.v, 0.005, 0.45, 0.7);
+    smoothPoint(fitState.rThumb, thumbR.x, thumbR.y, thumbR.z, thumbR.v, 0.005, 0.45, 0.7);
+  }
+
+  silGuide.classList.toggle('show', fitState.tooClose);
+  statusPill.textContent = fitState.tooClose ? (offEdge ? 'Center shoulders inside frame' : 'Step back') : 'Auto-fit active';
+}
+
+/* ---------- Simple Scale+Rotate Garment Renderer (reliable body-fit) ---------- */
+function renderGarmentMeshFit(asset, item, W, H, srcW, srcH, mirrored) {
+  /* ── 1. Convert normalised landmark coords → canvas pixels ── */
+  const sc = Math.max(W / Math.max(1, srcW), H / Math.max(1, srcH));
+  const rW = srcW * sc, rH = srcH * sc;
+  const offX = (W - rW) / 2;
+  const offY = (H - rH) / 2;
+  const toPx = (pt) => ({
+    x: offX + pt.x * rW,
+    y: offY + pt.y * rH + verticalOffset,
+    z: pt.z, v: pt.v
+  });
+
+  const pLS   = toPx(fitState.ls),  pRS   = toPx(fitState.rs);
+  const pNose = toPx(fitState.nose);
+  const pLW   = toPx(fitState.lw),  pRW   = toPx(fitState.rw);
+  const pLHand= toPx(fitState.lHand), pRHand= toPx(fitState.rHand);
+  const pLPinky=toPx(fitState.lPinky),pRPinky=toPx(fitState.rPinky);
+  const pLThumb=toPx(fitState.lThumb),pRThumb=toPx(fitState.rThumb);
+
+  /* ── 2. Shoulder geometry ── */
+  const shoulderW = Math.hypot(pRS.x - pLS.x, pRS.y - pLS.y);
+  if (shoulderW < 20) return;
+  const midX  = (pLS.x + pRS.x) * 0.5;
+  const midY  = (pLS.y + pRS.y) * 0.5;
+  const angle = Math.atan2(pRS.y - pLS.y, pRS.x - pLS.x);
+
+  /* ── 3. Scale garment so its shoulder span matches the person's ── */
+  const sizeMult = SIZE_SCALE[activeSize] * fitScale;
+  const fc = asset.fullCanvas;
+  const garmentShoulderPx = fc.width * asset.shoulderSpanX;
+  const scale = (shoulderW * 1.05 * sizeMult) / Math.max(1, garmentShoulderPx);
+  const anchorX = fc.width * 0.5;
+  const anchorY = fc.height * asset.shoulderAnchorY;
+
+  /* ── 4. Composite: sleeves follow the arms, torso sits on top ── */
+  const work = getWorkCanvas(W, H);
+  const wctx = work.getContext('2d');
+  wctx.clearRect(0, 0, W, H);
+
+  // unit vectors: shoulders L→R (ux,uy) and "down" (dnx,dny)
+  const ux = (pRS.x - pLS.x) / shoulderW, uy = (pRS.y - pLS.y) / shoulderW;
+  const dnx = -uy, dny = ux;
+  const pLE = toPx(fitState.le), pRE = toPx(fitState.re);
+  const shoulderMid = { x: midX, y: midY };
+  const armHalfW = shoulderW * 0.15 * sizeMult;
+  const isShort = item.silhouette === 'tee';
+
+  const drawArm = (isLeft) => {
+    const sh = isLeft ? pLS : pRS, out = isLeft ? -1 : 1;
+    const seam = { x: sh.x + out * ux * shoulderW * 0.07 - dnx * shoulderW * 0.02,
+                   y: sh.y + out * uy * shoulderW * 0.07 - dny * shoulderW * 0.02 };
+    const armpit = { x: seam.x - out * ux * shoulderW * 0.08 + dnx * shoulderW * 0.30,
+                     y: seam.y - out * uy * shoulderW * 0.08 + dny * shoulderW * 0.30 };
+    const elbow = isLeft ? pLE : pRE, wrist = isLeft ? pLW : pRW;
+    const elbowVisible = (isLeft ? fitState.le.v : fitState.re.v) > 0.34;
+    drawConnectedSleeve(wctx,
+      isLeft ? asset.leftUpperCanvas : asset.rightUpperCanvas,
+      isLeft ? asset.leftForearmCanvas : asset.rightForearmCanvas,
+      seam, armpit, elbow, wrist, armHalfW, isLeft, isShort,
+      shoulderW, shoulderMid, H, elbowVisible);
+  };
+  drawArm(true);
+  drawArm(false);
+
+  // Torso body (rotated with shoulder line, anchored at shoulder midpoint)
+  wctx.save();
+  wctx.translate(midX, midY);
+  wctx.rotate(angle);
+  const tc = asset.torsoCanvas;
+  wctx.drawImage(tc,
+    (asset.torsoX - anchorX) * scale,
+    (asset.torsoY - anchorY) * scale,
+    tc.width * scale, tc.height * scale);
+  wctx.restore();
+
+  // Subtle cylindrical shading to add depth
+  wctx.save();
+  wctx.globalCompositeOperation = 'source-atop';
+  const cyl = wctx.createLinearGradient(pLS.x, pLS.y, pRS.x, pRS.y);
+  cyl.addColorStop(0,   'rgba(0,0,0,0.14)');
+  cyl.addColorStop(0.5, 'rgba(255,255,255,0.03)');
+  cyl.addColorStop(1,   'rgba(0,0,0,0.14)');
+  wctx.fillStyle = cyl;
+  wctx.fillRect(0, 0, W, H);
+  wctx.restore();
+
+  /* ── 5. Carve out jaw/neck so garment collar doesn't obscure the chin ── */
+  if (fitState.nose.v > 0.38) {
+    wctx.save();
+    wctx.globalCompositeOperation = 'destination-out';
+    const r  = shoulderW * 0.22;
+    const cy = pNose.y + r * 0.15;
+    const fg = wctx.createRadialGradient(pNose.x, cy, r * 0.35, pNose.x, cy, r * 1.05);
+    fg.addColorStop(0,    'rgba(0,0,0,1)');
+    fg.addColorStop(0.75, 'rgba(0,0,0,0.85)');
+    fg.addColorStop(1,    'rgba(0,0,0,0)');
+    wctx.fillStyle = fg;
+    wctx.beginPath();
+    wctx.ellipse(pNose.x, cy, r * 0.85, r * 1.0, 0, 0, Math.PI * 2);
+    wctx.fill();
+    wctx.restore();
+  }
+
+  /* ── 6. Carve out hands/wrists when in front of body ── */
+  const avgZ = (fitState.ls.z + fitState.rs.z) * 0.5;
+  const carveHand = (wr, idx, pnk, thm) => {
+    const minZ = Math.min(wr.z, idx.z, pnk.z, thm.z);
+    const overBody = wr.y < midY + shoulderW * 0.55 &&
+                     Math.abs(wr.x - midX) < shoulderW * 0.78;
+    if (minZ > avgZ + 0.04 && !overBody) return;
+    wctx.save();
+    wctx.globalCompositeOperation = 'destination-out';
+    const pts = [{ x: wr.x, y: wr.y, r: shoulderW * 0.145 }];
+    if (thm.v >= 0.28) pts.push({ x: thm.x, y: thm.y, r: shoulderW * 0.13 });
+    if (idx.v >= 0.28) pts.push({ x: idx.x, y: idx.y, r: shoulderW * 0.16 },
+      { x: idx.x+(idx.x-wr.x)*0.5, y: idx.y+(idx.y-wr.y)*0.5, r: shoulderW * 0.14 });
+    if (pnk.v >= 0.28) pts.push({ x: pnk.x+(pnk.x-wr.x)*0.4, y: pnk.y+(pnk.y-wr.y)*0.4, r: shoulderW * 0.13 });
+    for (const c of pts) {
+      const hg = wctx.createRadialGradient(c.x, c.y, c.r * 0.4, c.x, c.y, c.r);
+      hg.addColorStop(0,    'rgba(0,0,0,1)');
+      hg.addColorStop(0.65, 'rgba(0,0,0,0.85)');
+      hg.addColorStop(1,    'rgba(0,0,0,0)');
+      wctx.fillStyle = hg;
+      wctx.beginPath(); wctx.arc(c.x, c.y, c.r, 0, Math.PI * 2); wctx.fill();
+    }
+    wctx.restore();
+  };
+  carveHand(pLW, pLHand, pLPinky, pLThumb);
+  carveHand(pRW, pRHand, pRPinky, pRThumb);
+
+  /* ── 7. Composite result onto main AR canvas ── */
+  ctx.save();
+  ctx.globalAlpha = fitState.tooClose ? 0.3 : 0.96;
+  ctx.shadowColor = 'rgba(0,0,0,0.12)';
+  ctx.shadowBlur  = 5;
+  ctx.drawImage(work, 0, 0);
+  ctx.restore();
+
+  /* ── 8. Optional skeleton debug overlay ── */
+  if (showGuides) {
+    ctx.save();
+    ctx.strokeStyle = '#35d07f'; ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(pLW.x, pLW.y); ctx.lineTo(pLS.x, pLS.y);
+    ctx.lineTo(pRS.x, pRS.y); ctx.lineTo(pRW.x, pRW.y); ctx.stroke();
+    [pLS, pRS, pLW, pRW].forEach(pt => {
+      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    });
+    // Shoulder midpoint crosshair
+    ctx.fillStyle = '#ff4455';
+    ctx.beginPath(); ctx.arc(midX, midY, 5, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+}
+
+/* ---------- Continuous Frame Loop & UI Wiring ---------- */
+let lastVideoTime = -1, lastInferMs = 0, inferBusy = false;
+
+(function frameLoop() {
+  requestAnimationFrame(frameLoop);
+  if (activeTryIdx < 0) return;
+
+  const rect = canvasEl.parentElement.getBoundingClientRect();
+  const W = Math.max(1, Math.round(rect.width)), H = Math.max(1, Math.round(rect.height));
+  if (canvasEl.width !== W || canvasEl.height !== H) { canvasEl.width = W; canvasEl.height = H; }
+  ctx.clearRect(0, 0, W, H);
+
+  let srcW = W, srcH = H;
+  if (currentMode === 'camera') {
+    if (videoEl.readyState >= 2) {
+      srcW = videoEl.videoWidth || W; srcH = videoEl.videoHeight || H;
+      const now = performance.now();
+      if (poseLandmarker && !inferBusy && videoEl.currentTime !== lastVideoTime && now - lastInferMs > 28) {
+        lastVideoTime = videoEl.currentTime; lastInferMs = now;
+        if (runningMode !== 'VIDEO') {
+          inferBusy = true;
+          ensureRunningMode('VIDEO').finally(() => { inferBusy = false; });
+        } else {
+          try {
+            const res = poseLandmarker.detectForVideo(videoEl, now);
+            applyLandmarks(res.landmarks?.[0], true, srcW, srcH, W, H);
+          } catch {}
+        }
+      }
+    }
+  } else if (photoEl.naturalWidth > 0) {
+    srcW = photoEl.naturalWidth; srcH = photoEl.naturalHeight;
+  }
+
+  const item = ITEMS[activeTryIdx];
+  const asset = assetCache.get(`${item.id}-${item.colIdx}-${item.colors[item.colIdx].img}`);
+  if (asset && fitState.ready) renderGarmentMeshFit(asset, item, W, H, srcW, srcH, currentMode === 'camera');
+})();
+
+async function startCamera() {
+  document.getElementById('camFallback').classList.remove('show');
+  if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
+    document.getElementById('camFallback').classList.add('show');
+    statusPill.textContent = 'Camera requires HTTPS';
+    return;
+  }
+  if (cameraStream) return;
+  try {
+    statusPill.textContent = 'Starting camera...';
+    cameraStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user', aspectRatio: { ideal: 4 / 3 }, width: { ideal: 960 }, height: { ideal: 720 } },
+      audio: false
+    });
+    videoEl.srcObject = cameraStream;
+    await videoEl.play();
+    await initLandmarker();
+  } catch {
+    document.getElementById('camFallbackMsg').textContent = 'Camera access denied or unavailable.';
+    document.getElementById('camFallback').classList.add('show');
+    statusPill.textContent = 'Camera unavailable';
+  }
+}
+
+function stopCamera() {
+  if (cameraStream) { cameraStream.getTracks().forEach((t) => t.stop()); cameraStream = null; }
+}
+
+async function detectUploadedPhoto() {
+  if (!photoEl.complete || !photoEl.naturalWidth) return;
+  await initLandmarker();
+  const ok = await ensureRunningMode('IMAGE');
+  if (!ok) return;
+  fitState.ready = false;
+  const res = poseLandmarker.detect(photoEl);
+  applyLandmarks(res.landmarks?.[0], false, photoEl.naturalWidth, photoEl.naturalHeight, canvasEl.width || 420, canvasEl.height || 420);
+}
+
+function updateMirrorMeta() {
+  if (activeTryIdx < 0) return;
+  const it = ITEMS[activeTryIdx], col = it.colors[it.colIdx];
+  document.getElementById('mirrorTitle').textContent = it.name;
+  document.getElementById('mirrorSub').textContent = `${col.n} · Size ${activeSize} · $${it.price}`;
+}
+
+async function openTryOn(idx) {
+  activeTryIdx = idx;
+  document.getElementById('studioShell').classList.add('with-mirror');
+  document.getElementById('mirrorPanel').classList.add('open');
+  updateMirrorMeta();
+  renderGrid();
+  await prepareGarmentAsset(ITEMS[idx], ITEMS[idx].colIdx);
+  if (currentMode === 'camera') startCamera();
+}
+
+function closeTryOn() {
+  activeTryIdx = -1; fitState.ready = false;
+  document.getElementById('studioShell').classList.remove('with-mirror');
+  document.getElementById('mirrorPanel').classList.remove('open');
+  stopCamera(); renderGrid();
+}
+
+function renderGrid() {
+  const grid = document.getElementById('garmentGrid');
+  grid.innerHTML = ITEMS.map((it, idx) => {
+    const col = it.colors[it.colIdx], isOn = idx === activeTryIdx;
+    const dots = it.colors.map((c, k) => `<button type="button" class="dot${k === it.colIdx ? ' on' : ''}" data-idx="${idx}" data-col="${k}" style="background:${c.h}" aria-label="${c.n}"></button>`).join('');
+    return `<article class="p-card${isOn ? ' active-tryon' : ''}">
+      <div class="p-visual">
+        <button type="button" class="tryon-pill${isOn ? ' on' : ''}" data-try="${idx}">&#10024; ${isOn ? 'Trying On' : 'Try On'}</button>
+        <img id="gimg-${idx}" src="${cardUrls[col.img] || (IMG_BASE + col.img)}" alt="${it.name}">
+      </div>
+      <div class="p-meta"><h2>${it.name}</h2><span>$${it.price}</span></div>
+      <p class="p-col-name">${col.n}</p>
+      <div class="p-actions">
+        <div class="swatches">${dots}</div>
+        <div class="quick-add">
+          <select class="sz-sel" id="sz-${idx}"><option>S</option><option selected>M</option><option>L</option><option>XL</option></select>
+          <button type="button" class="add-mini" data-add="${idx}">Add</button>
+        </div>
+      </div>
+    </article>`;
+  }).join('');
+
+  ITEMS.forEach((it, idx) => prepareGarmentAsset(it, it.colIdx).then((a) => {
+    const el = document.getElementById(`gimg-${idx}`);
+    if (el) el.src = a.fullUrl;
+  }));
+}
+
+function updateBagCount() {
+  const items = JSON.parse(localStorage.getItem('tread_bag') || '[]');
+  document.getElementById('cnt').textContent = items.reduce((a, b) => a + b.qty, 0);
+}
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('o');
+  clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('o'), 2000);
+}
+function addToBag(idx, size) {
+  const it = ITEMS[idx], col = it.colors[it.colIdx];
+  const bag = JSON.parse(localStorage.getItem('tread_bag') || '[]');
+  const key = `${it.id}-${it.colIdx}-${size}`;
+  const ex = bag.find((x) => x.id === key);
+  if (ex) ex.qty += 1;
+  else bag.push({ id: key, name: it.name, colour: `${col.n} (${size})`, price: it.price, qty: 1 });
+  localStorage.setItem('tread_bag', JSON.stringify(bag));
+  updateBagCount(); toast(`${it.name} (${size}) added to bag`);
+}
+
+document.getElementById('closeMirrorBtn').onclick = closeTryOn;
+document.getElementById('mirrorBagBtn').onclick = () => { if (activeTryIdx >= 0) addToBag(activeTryIdx, activeSize); };
+document.getElementById('modeCamBtn').onclick = () => {
+  currentMode = 'camera';
+  document.getElementById('modeCamBtn').classList.add('on');
+  document.getElementById('modePhotoBtn').classList.remove('on');
+  videoEl.style.display = 'block'; photoEl.style.display = 'none';
+  startCamera();
+};
+document.getElementById('modePhotoBtn').onclick = () => document.getElementById('photoFileInput').click();
+document.getElementById('fallbackUploadBtn').onclick = () => document.getElementById('photoFileInput').click();
+document.getElementById('photoFileInput').onchange = (e) => {
+  const f = e.target.files?.[0];
+  if (!f) return;
+  currentMode = 'photo';
+  stopCamera();
+  document.getElementById('modeCamBtn').classList.remove('on');
+  document.getElementById('modePhotoBtn').classList.add('on');
+  document.getElementById('camFallback').classList.remove('show');
+  videoEl.style.display = 'none'; photoEl.style.display = 'block';
+  photoEl.onload = detectUploadedPhoto;
+  photoEl.src = URL.createObjectURL(f);
+};
+
+document.getElementById('fitToggleBtn').onclick = () => document.getElementById('fitControls').classList.toggle('open');
+document.getElementById('ptsToggleBtn').onclick = (e) => { showGuides = !showGuides; e.target.classList.toggle('on', showGuides); };
+document.getElementById('sizePills').onclick = (e) => {
+  const b = e.target.closest('[data-sz]');
+  if (!b) return;
+  activeSize = b.dataset.sz;
+  document.querySelectorAll('.sz-pill').forEach((p) => p.classList.toggle('on', p.dataset.sz === activeSize));
+  updateMirrorMeta();
+};
+document.getElementById('scaleSlider').oninput = (e) => { fitScale = parseFloat(e.target.value); document.getElementById('scaleVal').textContent = `${Math.round(fitScale * 100)}%`; };
+document.getElementById('offsetSlider').oninput = (e) => { verticalOffset = parseInt(e.target.value, 10); document.getElementById('offsetVal').textContent = `${verticalOffset}px`; };
+document.getElementById('resetFitBtn').onclick = () => {
+  fitScale = 1; verticalOffset = 0;
+  document.getElementById('scaleSlider').value = 1; document.getElementById('offsetSlider').value = 0;
+  document.getElementById('scaleVal').textContent = '100%'; document.getElementById('offsetVal').textContent = '0px';
+};
+
+document.getElementById('garmentGrid').onclick = (e) => {
+  const t = e.target.closest('[data-try]');
+  if (t) { openTryOn(+t.dataset.try); return; }
+  const d = e.target.closest('.dot');
+  if (d) {
+    const idx = +d.dataset.idx; ITEMS[idx].colIdx = +d.dataset.col;
+    renderGrid(); if (idx === activeTryIdx) openTryOn(idx);
+    return;
+  }
+  const a = e.target.closest('[data-add]');
+  if (a) { const i = +a.dataset.add; addToBag(i, document.getElementById(`sz-${i}`).value); }
+};
+
+updateBagCount();
+renderGrid();
+</script>
+</body>
+</html>

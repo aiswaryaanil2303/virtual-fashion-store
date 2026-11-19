@@ -1,0 +1,343 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Styling Bag & Checkout | tread</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Hanken+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f6f1;--panel:#fcfbf8;--card:#ffffff;--line:#e2dfd7;
+  --ink:#16161a;--mut:#7a776f;--accent:#a5472f;--ok:#24503a;--sh:rgba(20,18,12,.08);
+  --serif:"Cormorant Garamond",Georgia,serif;
+  --sans:"Hanken Grotesk",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+body{
+  background:var(--bg);color:var(--ink);font:400 14px/1.45 var(--sans);
+  min-height:100svh;display:flex;flex-direction:column;
+}
+button,input{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer}
+
+/* Top Bar */
+header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:16px clamp(20px,4vw,44px);border-bottom:1px solid var(--line);
+  background:rgba(252,251,248,.92);backdrop-filter:blur(10px);position:sticky;top:0;z-index:20;
+}
+.logo{font-weight:600;font-size:21px;letter-spacing:-.04em;font-style:italic;text-decoration:none;color:var(--ink)}
+nav{display:flex;align-items:center;gap:24px;font-size:13px}
+nav a{color:var(--mut);text-decoration:none;transition:color .2s}
+nav a:hover,nav a.active{color:var(--ink);font-weight:500}
+.bagbtn{
+  display:flex;align-items:center;gap:8px;padding:6px 14px;
+  border:1px solid var(--ink);border-radius:20px;font-size:12px;font-weight:500;
+  background:var(--card);text-decoration:none;
+}
+.bagbtn b{background:var(--ink);color:#fff;min-width:18px;height:18px;border-radius:9px;display:grid;place-items:center;font-size:11px}
+
+/* Editorial Header */
+.page-head{
+  padding:clamp(28px,4vw,52px) clamp(20px,5vw,64px) 24px;
+  border-bottom:1px solid var(--line);
+  background:radial-gradient(circle at 85% 20%,#ffffff 0%,#f7f6f1 70%);
+  display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px;
+}
+.page-head small{display:block;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:6px}
+.page-head h1{font-family:var(--serif);font-size:clamp(34px,4.5vw,58px);font-weight:400;line-height:1}
+.cont-link{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--mut);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:3px}
+.cont-link:hover{color:var(--ink);border-color:var(--ink)}
+
+/* Main Bag Layout */
+.bag-layout{
+  display:grid;grid-template-columns:1.35fr 1fr;gap:clamp(24px,4vw,48px);
+  padding:clamp(24px,4vw,48px) clamp(20px,5vw,64px) 80px;flex:1;align-items:start;
+}
+
+/* Bag Items List */
+.items-panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px 24px}
+.bag-row{
+  display:grid;grid-template-columns:76px 1fr auto;gap:18px;align-items:center;
+  padding:20px 0;border-bottom:1px solid var(--line);
+}
+.bag-row:last-child{border-bottom:0}
+.thumb{
+  width:76px;height:94px;border-radius:10px;background:#f3f2ed;border:1px solid var(--line);
+  display:grid;place-items:center;overflow:hidden;
+}
+.thumb img{width:84%;height:84%;object-fit:contain}
+.thumb span{font-family:var(--serif);font-size:22px;font-style:italic;color:var(--mut)}
+.info b{font-size:16px;font-weight:500;display:block;margin-bottom:3px}
+.info small{font-size:12px;color:var(--mut);display:block;margin-bottom:10px}
+
+.qty-ctrl{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.qty-ctrl button{width:28px;height:28px;display:grid;place-items:center;font-size:14px;transition:.15s}
+.qty-ctrl button:hover{background:var(--bg)}
+.qty-ctrl span{min-width:28px;text-align:center;font-size:12px;font-weight:500}
+
+.row-right{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+.row-price{font-family:var(--serif);font-size:21px;font-weight:600}
+.rm-btn{font-size:11px;color:var(--accent);text-decoration:underline}
+
+/* Empty State */
+.empty-box{padding:56px 24px;text-align:center}
+.empty-box h3{font-family:var(--serif);font-size:30px;font-weight:400;margin-bottom:8px}
+.empty-box p{color:var(--mut);margin-bottom:22px}
+.empty-links{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.pill-cta{padding:11px 20px;border-radius:8px;background:var(--ink);color:#fff;text-decoration:none;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.pill-cta.alt{background:var(--bg);color:var(--ink);border:1px solid var(--line)}
+
+/* Summary & Checkout Panel */
+.checkout-card{
+  background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;
+  position:sticky;top:88px;
+}
+.checkout-card h2{font-family:var(--serif);font-size:28px;font-weight:400;margin-bottom:16px}
+
+.promo-row{display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:18px}
+.promo-row input{
+  padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:13px;
+}
+.promo-row button{
+  padding:0 16px;border-radius:8px;border:1px solid var(--ink);font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;
+}
+.promo-row button:hover{background:var(--ink);color:#fff}
+.promo-msg{font-size:12px;margin:-10px 0 14px;color:var(--ok)}
+
+.line-item{display:flex;justify-content:space-between;padding:8px 0;font-size:13px;color:var(--mut)}
+.line-item.total{
+  border-top:1px solid var(--ink);margin-top:10px;padding-top:14px;
+  color:var(--ink);font-weight:600;font-size:16px;
+}
+.line-item.total span:last-child{font-family:var(--serif);font-size:26px}
+
+.ship-form{display:grid;gap:10px;margin:18px 0;padding-top:16px;border-top:1px solid var(--line)}
+.ship-form label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);font-weight:600}
+.ship-form input{
+  width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);font-size:13px;
+}
+.ship-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.order-btn{
+  width:100%;padding:14px;border-radius:8px;background:var(--ink);color:#fff;
+  font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;transition:.2s;
+}
+.order-btn:hover{background:var(--accent)}
+.order-btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* Order Confirmation Modal */
+.ov{position:fixed;inset:0;background:rgba(16,16,20,.45);backdrop-filter:blur(5px);display:none;place-items:center;z-index:50;padding:16px}
+.ov.o{display:grid}
+.modal{width:min(440px,100%);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px;text-align:center}
+.modal small{display:block;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ok);font-weight:600;margin-bottom:8px}
+.modal h3{font-family:var(--serif);font-size:34px;font-weight:400;margin-bottom:10px}
+.modal p{color:var(--mut);font-size:13px;margin-bottom:20px}
+
+@media(max-width:860px){
+  .bag-layout{grid-template-columns:1fr}
+  .checkout-card{position:static}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="{% url 'home' %}" class="logo">tread</a>
+  <nav>
+    <a href="{% url 'home' %}">Home</a>
+    <a href="{% url 'looks' %}">Looks</a>
+    <a href="{% url 'new_in' %}">New in</a>
+    <a href="{% url 'studio' %}">Studio</a>
+    <a href="{% url 'bag' %}" class="bagbtn">Bag <b id="cnt">0</b></a>
+  </nav>
+</header>
+
+<section class="page-head">
+  <div>
+    <small>Atelier Order &mdash; Complimentary Studio Packaging</small>
+    <h1>Your Styling Bag.</h1>
+  </div>
+  <a href="{% url 'new_in' %}" class="cont-link">&larr; Continue Shopping</a>
+</section>
+
+<main class="bag-layout">
+  <section class="items-panel" id="bagList"></section>
+
+  <aside class="checkout-card">
+    <h2>Order Summary</h2>
+
+    <div class="promo-row">
+      <input type="text" id="promoInput" placeholder="Promo code (try TREAD10)">
+      <button type="button" id="applyPromo">Apply</button>
+    </div>
+    <div class="promo-msg" id="promoMsg"></div>
+
+    <div class="line-item"><span>Subtotal</span><span id="subVal">$0</span></div>
+    <div class="line-item" id="discRow" style="display:none;color:var(--ok)"><span>Atelier Discount (10%)</span><span id="discVal">-$0</span></div>
+    <div class="line-item"><span>Standard Courier</span><span id="shipVal">$0</span></div>
+    <div class="line-item total"><span>Total</span><span id="totVal">$0</span></div>
+
+    <form class="ship-form" id="checkoutForm">
+      <label>Delivery Details</label>
+      <input type="text" id="custName" placeholder="Full Name" required>
+      <input type="email" id="custEmail" placeholder="Email Address for Receipt" required>
+      <div class="ship-grid">
+        <input type="text" id="custCity" placeholder="City" required>
+        <input type="text" id="custZip" placeholder="Postal Code" required>
+      </div>
+      <button type="submit" class="order-btn" id="placeOrderBtn">Place Studio Order</button>
+    </form>
+  </aside>
+</main>
+
+<div class="ov" id="confirmOv">
+  <div class="modal">
+    <small>Order Confirmed &bull; #TRD-2026</small>
+    <h3>Thank you for your order.</h3>
+    <p id="confirmText">Your curated pieces are being prepared in our studio.</p>
+    <a href="{% url 'home' %}" class="pill-cta" style="display:inline-block">Back to Atelier</a>
+  </div>
+</div>
+
+<script>
+(function () {
+  var IMG_BASE = "{% static 'images/' %}";
+  var discountRate = 0;
+
+  // Map product IDs to preview images in static/images/
+  var PREVIEW_MAP = {
+    'r1': 'rack1-1.png',
+    'r2': 'rack2-1.png',
+    'r3': 'rack3-1.png',
+    'r4': 'rack4-1.png',
+    'r5': 'rack5-1.png',
+    'r6': 'rack6-1.png',
+    'r7': 'rack7-1.png',
+    'b1': 'bottom(1).png',
+    'b2': 'bottom(3).png',
+    'b3': 'bottom(2).png',
+    's1': 'shoe1.png',
+    's2': 'shoe2.png'
+  };
+
+  function getThumbHtml(item) {
+    var prefix = (item.id || '').split('-')[0];
+    var file = PREVIEW_MAP[prefix];
+    if (file) {
+      return '<img src="' + IMG_BASE + file + '" alt="' + item.name + '" onerror="this.style.display=\'none\'">';
+    }
+    return '<span>t.</span>';
+  }
+
+  var Bag = {
+    items: JSON.parse(localStorage.getItem('tread_bag') || '[]'),
+    save: function () {
+      localStorage.setItem('tread_bag', JSON.stringify(this.items));
+      render();
+    }
+  };
+
+  function render() {
+    var count = Bag.items.reduce(function (a, b) { return a + b.qty; }, 0);
+    document.getElementById('cnt').textContent = count;
+
+    var listEl = document.getElementById('bagList');
+    var orderBtn = document.getElementById('placeOrderBtn');
+
+    if (!Bag.items.length) {
+      listEl.innerHTML =
+        '<div class="empty-box">' +
+          '<h3>Your styling bag is empty.</h3>' +
+          '<p>Explore our latest drop or build a custom outfit in the 3D Studio.</p>' +
+          '<div class="empty-links">' +
+            '<a href="{% url "new_in" %}" class="pill-cta">Shop New Arrivals</a>' +
+            '<a href="{% url "studio" %}" class="pill-cta alt">Open 3D Studio</a>' +
+          '</div>' +
+        '</div>';
+      orderBtn.disabled = true;
+    } else {
+      orderBtn.disabled = false;
+      listEl.innerHTML = Bag.items.map(function (it, idx) {
+        return '<div class="bag-row">' +
+          '<div class="thumb">' + getThumbHtml(it) + '</div>' +
+          '<div class="info">' +
+            '<b>' + it.name + '</b>' +
+            '<small>' + it.colour + '</small>' +
+            '<div class="qty-ctrl">' +
+              '<button type="button" data-act="dec" data-idx="' + idx + '" aria-label="Decrease quantity">&minus;</button>' +
+              '<span>' + it.qty + '</span>' +
+              '<button type="button" data-act="inc" data-idx="' + idx + '" aria-label="Increase quantity">+</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="row-right">' +
+            '<span class="row-price">$' + (it.price * it.qty) + '</span>' +
+            '<button type="button" class="rm-btn" data-act="rm" data-idx="' + idx + '">Remove</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    var sub = Bag.items.reduce(function (a, b) { return a + b.price * b.qty; }, 0);
+    var disc = Math.round(sub * discountRate);
+    var ship = sub > 0 && sub < 200 ? 12 : 0;
+    var total = Math.max(0, sub - disc + ship);
+
+    document.getElementById('subVal').textContent = '$' + sub;
+    document.getElementById('discRow').style.display = disc > 0 ? 'flex' : 'none';
+    document.getElementById('discVal').textContent = '-$' + disc;
+    document.getElementById('shipVal').textContent = sub === 0 ? '$0' : (ship === 0 ? 'Complimentary' : '$' + ship);
+    document.getElementById('totVal').textContent = '$' + total;
+  }
+
+  document.getElementById('bagList').onclick = function (e) {
+    var btn = e.target.closest('[data-act]');
+    if (!btn) return;
+    var idx = +btn.dataset.idx;
+    var act = btn.dataset.act;
+
+    if (act === 'inc') Bag.items[idx].qty += 1;
+    else if (act === 'dec') {
+      if (Bag.items[idx].qty > 1) Bag.items[idx].qty -= 1;
+      else Bag.items.splice(idx, 1);
+    } else if (act === 'rm') {
+      Bag.items.splice(idx, 1);
+    }
+    Bag.save();
+  };
+
+  document.getElementById('applyPromo').onclick = function () {
+    var code = document.getElementById('promoInput').value.trim().toUpperCase();
+    var msg = document.getElementById('promoMsg');
+    if (code === 'TREAD10') {
+      discountRate = 0.10;
+      msg.style.color = 'var(--ok)';
+      msg.textContent = 'Code TREAD10 applied — 10% off your order.';
+    } else {
+      discountRate = 0;
+      msg.style.color = 'var(--accent)';
+      msg.textContent = 'Invalid promo code. Try TREAD10.';
+    }
+    render();
+  };
+
+  document.getElementById('checkoutForm').onsubmit = function (e) {
+    e.preventDefault();
+    if (!Bag.items.length) return;
+    var name = document.getElementById('custName').value.trim();
+    var email = document.getElementById('custEmail').value.trim();
+    document.getElementById('confirmText').textContent =
+      'Thank you, ' + name + '. A confirmation receipt has been sent to ' + email + '.';
+    Bag.items = [];
+    Bag.save();
+    document.getElementById('confirmOv').classList.add('o');
+  };
+
+  render();
+})();
+</script>
+</body>
+</html>

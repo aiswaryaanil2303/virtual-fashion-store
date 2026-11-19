@@ -1,0 +1,367 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Looks &mdash; Seasonal Lookbook | tread</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f6f1;--card:#efede6;--white:#ffffff;--line:#dfdcd3;
+  --ink:#16161a;--mut:#6f6d67;--accent:#a5472f;
+  --sans:"Hanken Grotesk",system-ui,sans-serif;
+  --serif:"Cormorant Garamond",Georgia,serif;
+}
+*{box-sizing:border-box;margin:0}
+body{
+  background:var(--bg);color:var(--ink);font:400 14px/1.5 var(--sans);
+  min-height:100svh;display:flex;flex-direction:column;
+}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:18px clamp(20px,4vw,52px);border-bottom:1px solid var(--line);
+  background:rgba(247,246,241,.92);backdrop-filter:blur(10px);
+  position:sticky;top:0;z-index:30;
+}
+.logo{font-weight:700;font-size:20px;letter-spacing:-.05em;font-style:italic;text-decoration:none;color:var(--ink)}
+nav{display:flex;align-items:center;gap:24px;font-size:13px}
+nav a{color:var(--mut);text-decoration:none;transition:color .2s}
+nav a:hover,nav a.active{color:var(--ink);font-weight:500}
+.bagbtn{
+  display:flex;align-items:center;gap:7px;padding:6px 14px;
+  border:1px solid var(--line);border-radius:20px;font-size:12px;font-weight:500;
+  background:#fff;text-decoration:none;color:var(--ink);transition:.2s;
+}
+.bagbtn:hover{border-color:var(--ink)}
+.bagbtn b{background:var(--ink);color:#fff;min-width:18px;height:18px;border-radius:9px;display:grid;place-items:center;font-size:11px}
+
+.looks-hero{
+  max-width:1240px;width:100%;margin:0 auto;
+  padding:clamp(36px,5vw,64px) clamp(20px,4vw,52px) 28px;
+  display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:20px;
+}
+.looks-hero small{
+  display:block;font-size:10px;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:8px;
+}
+.looks-hero h1{
+  font-family:var(--serif);font-size:clamp(36px,4.5vw,56px);font-weight:500;
+  line-height:1.05;letter-spacing:-.02em;
+}
+.looks-hero p{max-width:42ch;color:var(--mut);font-size:14px}
+
+.filter-tabs{
+  max-width:1240px;width:100%;margin:0 auto;
+  padding:0 clamp(20px,4vw,52px) 28px;
+  display:flex;gap:8px;flex-wrap:wrap;
+}
+.tab{
+  padding:7px 16px;border-radius:999px;border:1px solid var(--line);
+  font-size:12px;font-weight:500;color:var(--mut);background:transparent;transition:.2s;
+}
+.tab:hover,.tab.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+.looks-wrap{
+  max-width:1240px;width:100%;margin:0 auto;
+  padding:0 clamp(20px,4vw,52px) 96px;
+  display:flex;flex-direction:column;gap:48px;
+}
+.look-row{
+  display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(24px,4vw,52px);
+  background:var(--white);border:1px solid var(--line);border-radius:20px;
+  padding:clamp(18px,3vw,32px);align-items:center;
+}
+.look-row:nth-child(even) .look-media{order:2}
+
+.look-media{
+  position:relative;aspect-ratio:4/4.7;border-radius:14px;overflow:hidden;
+  background:var(--card);display:flex;align-items:center;justify-content:center;
+}
+.look-media img{
+  width:100%;height:100%;object-fit:cover;transition:transform .5s ease;
+}
+.look-media:hover img{transform:scale(1.03)}
+.look-tag{
+  position:absolute;top:14px;left:14px;
+  padding:5px 12px;border-radius:999px;background:rgba(22,22,26,.78);
+  color:#fff;font-size:11px;font-weight:500;backdrop-filter:blur(8px);
+}
+
+.look-info{display:flex;flex-direction:column;gap:18px}
+.look-head small{
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);font-weight:600;
+}
+.look-head h2{
+  font-family:var(--serif);font-size:clamp(28px,3vw,38px);font-weight:500;
+  line-height:1.12;margin:4px 0 8px;
+}
+.look-head p{color:var(--mut);font-size:14px;max-width:46ch}
+
+.piece-list{
+  display:flex;flex-direction:column;gap:12px;
+  border-top:1px solid var(--line);padding-top:16px;
+}
+.piece-item{
+  display:flex;align-items:center;gap:14px;
+  padding:10px 12px;border-radius:12px;background:var(--bg);
+  border:1px solid transparent;transition:.2s;
+}
+.piece-item:hover{border-color:var(--line);background:#f2f0e9}
+.piece-thumb{
+  width:54px;height:62px;border-radius:8px;background:#fff;
+  padding:6px;object-fit:contain;flex-shrink:0;border:1px solid var(--line);
+}
+.piece-meta{flex:1;min-width:0}
+.piece-meta b{display:block;font-size:13px;font-weight:600}
+.piece-meta span{font-size:12px;color:var(--mut)}
+
+.piece-cta{display:flex;align-items:center;gap:6px}
+.sz-pick{
+  border:1px solid var(--line);border-radius:8px;padding:5px 7px;
+  font-size:11px;background:#fff;color:var(--ink);
+}
+.add-piece{
+  padding:6px 13px;border-radius:8px;background:var(--ink);color:#fff;
+  font-size:11px;font-weight:500;white-space:nowrap;
+}
+.add-piece:hover{opacity:.85}
+
+.look-footer{
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  padding-top:6px;
+}
+.studio-link{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 18px;border-radius:999px;border:1px solid var(--ink);
+  font-size:12px;font-weight:600;text-decoration:none;color:var(--ink);transition:.2s;
+}
+.studio-link:hover{background:var(--ink);color:#fff}
+.add-all-btn{
+  padding:9px 18px;border-radius:999px;background:var(--accent);color:#fff;
+  font-size:12px;font-weight:600;
+}
+.add-all-btn:hover{opacity:.9}
+
+.toast{
+  position:fixed;right:24px;bottom:24px;
+  background:var(--ink);color:#fff;padding:10px 18px;border-radius:20px;
+  font-size:12px;opacity:0;pointer-events:none;transition:.25s;z-index:60;
+}
+.toast.o{opacity:1}
+
+@media(max-width:860px){
+  .look-row{grid-template-columns:1fr}
+  .look-row:nth-child(even) .look-media{order:0}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="{% url 'home' %}" class="logo">tread</a>
+  <nav>
+    <a href="{% url 'home' %}">Home</a>
+    <a href="{% url 'looks' %}" class="active">Looks</a>
+    <a href="{% url 'new_in' %}">New in</a>
+    <a href="{% url 'studio' %}">Studio</a>
+    <a href="{% url 'bag' %}" class="bagbtn">Bag <b id="cnt">0</b></a>
+  </nav>
+</header>
+
+<section class="looks-hero">
+  <div>
+    <small>Autumn / Winter Editorial</small>
+    <h1>Curated Looks, Styled to Move.</h1>
+  </div>
+  <p>Explore complete silhouette pairings from the current collection. Add individual layers to your bag or open any outfit directly in the Live Try-On Studio.</p>
+</section>
+
+<div class="filter-tabs" id="filterTabs">
+  <button type="button" class="tab on" data-cat="all">All Looks (04)</button>
+  <button type="button" class="tab" data-cat="outerwear">Outerwear</button>
+  <button type="button" class="tab" data-cat="street">Everyday Street</button>
+  <button type="button" class="tab" data-cat="workwear">Workwear</button>
+</div>
+
+<main class="looks-wrap" id="looksContainer"></main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  var IMG_BASE = "{% static 'images/' %}";
+  var STUDIO_URL = "{% url 'studio' %}";
+
+  var LOOKS = [
+    {
+      id: 'look-01',
+      num: 'Look 01',
+      cat: 'outerwear',
+      title: 'The Varsity Layering Edit',
+      desc: 'Heavyweight melton wool with contrast cream sleeves layered over a crisp combed cotton tee for effortless daily structure.',
+      heroImg: 'look1.png',
+      fallbackHero: 'rack4-1.png',
+      pieces: [
+        { id: 'r4-0', name: 'Varsity Jacket', colour: 'Black / Cream', price: 168, img: 'rack4-1.png' },
+        { id: 'r7-0', name: 'Essential Heavy Tee', colour: 'White', price: 48, img: 'rack7-1.png' }
+      ]
+    },
+    {
+      id: 'look-02',
+      num: 'Look 02',
+      cat: 'workwear',
+      title: 'Washed Twill & Indigo Uniform',
+      desc: 'Garment-dyed charcoal overshirt worn open over chambray workwear shirting for relaxed tonal depth.',
+      heroImg: 'look2.png',
+      fallbackHero: 'rack3-1.png',
+      pieces: [
+        { id: 'r3-0', name: 'Stonewash Overshirt', colour: 'Charcoal', price: 112, img: 'rack3-1.png' },
+        { id: 'r5-0', name: 'Chambray Work Shirt', colour: 'Blue', price: 94, img: 'rack5-1.png' }
+      ]
+    },
+    {
+      id: 'look-03',
+      num: 'Look 03',
+      cat: 'street',
+      title: 'Archive Pitch & Graphic Kit',
+      desc: 'Retro ribbed football knit paired with heavyweight statement jersey for off-duty weekend rotation.',
+      heroImg: 'look3.png',
+      fallbackHero: 'rack6-1.png',
+      pieces: [
+        { id: 'r6-0', name: 'Snug Football Jersey', colour: 'Yellow', price: 78, img: 'rack6-1.png' },
+        { id: 'r2-0', name: 'It’s Us Never Them Tee', colour: 'Black', price: 62, img: 'rack2-1.png' }
+      ]
+    },
+    {
+      id: 'look-04',
+      num: 'Look 04',
+      cat: 'street',
+      title: 'Monochrome Studio Long Sleeve',
+      desc: 'Drop-shoulder heavyweight long sleeve in natural off-white paired with tonal cream essentials.',
+      heroImg: 'look4.png',
+      fallbackHero: 'rack1-1.png',
+      pieces: [
+        { id: 'r1-0', name: 'Memory Long Sleeve', colour: 'White', price: 88, img: 'rack1-1.png' },
+        { id: 'r7-1', name: 'Essential Heavy Tee', colour: 'Sand', price: 48, img: 'rack7-2.png' }
+      ]
+    }
+  ];
+
+  var activeCat = 'all';
+
+  function renderLooks() {
+    var list = activeCat === 'all' ? LOOKS : LOOKS.filter(function (l) { return l.cat === activeCat; });
+    var box = document.getElementById('looksContainer');
+
+    box.innerHTML = list.map(function (lk, lIdx) {
+      var piecesHtml = lk.pieces.map(function (p, pIdx) {
+        var key = lIdx + '-' + pIdx;
+        return '<div class="piece-item">' +
+          '<img class="piece-thumb" src="' + IMG_BASE + p.img + '" alt="' + p.name + '">' +
+          '<div class="piece-meta">' +
+            '<b>' + p.name + '</b>' +
+            '<span>' + p.colour + ' &bull; $' + p.price + '</span>' +
+          '</div>' +
+          '<div class="piece-cta">' +
+            '<select class="sz-pick" id="lsz-' + key + '" aria-label="Size">' +
+              '<option>S</option><option selected>M</option><option>L</option><option>XL</option>' +
+            '</select>' +
+            '<button type="button" class="add-piece" data-l="' + lIdx + '" data-p="' + pIdx + '">Add</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+
+      return '<article class="look-row">' +
+        '<div class="look-media">' +
+          '<span class="look-tag">' + lk.num + '</span>' +
+          '<img src="' + IMG_BASE + lk.heroImg + '" onerror="this.onerror=null;this.src=\'' + IMG_BASE + lk.fallbackHero + '\';this.style.objectFit=\'contain\';this.style.padding=\'36px\';" alt="' + lk.title + '">' +
+        '</div>' +
+        '<div class="look-info">' +
+          '<div class="look-head">' +
+            '<small>' + lk.num + ' &bull; ' + lk.cat + '</small>' +
+            '<h2>' + lk.title + '</h2>' +
+            '<p>' + lk.desc + '</p>' +
+          '</div>' +
+          '<div class="piece-list">' + piecesHtml + '</div>' +
+          '<div class="look-footer">' +
+            '<a href="' + STUDIO_URL + '" class="studio-link">&#10024; Try On in Studio</a>' +
+            '<button type="button" class="add-all-btn" data-all="' + lIdx + '">Add Full Look to Bag</button>' +
+          '</div>' +
+        '</div>' +
+      '</article>';
+    }).join('');
+  }
+
+  document.getElementById('filterTabs').onclick = function (e) {
+    var btn = e.target.closest('.tab');
+    if (!btn) return;
+    activeCat = btn.dataset.cat;
+    document.querySelectorAll('.tab').forEach(function (t) { t.classList.toggle('on', t === btn); });
+    renderLooks();
+  };
+
+  function updateBagCount() {
+    var items = JSON.parse(localStorage.getItem('tread_bag') || '[]');
+    document.getElementById('cnt').textContent = items.reduce(function (a, b) { return a + b.qty; }, 0);
+  }
+  updateBagCount();
+
+  function toast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('o');
+    clearTimeout(toast.t);
+    toast.t = setTimeout(function () { t.classList.remove('o'); }, 2200);
+  }
+
+  function pushToBag(piece, size) {
+    var bag = JSON.parse(localStorage.getItem('tread_bag') || '[]');
+    var key = piece.id + '-' + size;
+    var ex = bag.find(function (x) { return x.id === key; });
+    if (ex) ex.qty += 1;
+    else bag.push({
+      id: key,
+      name: piece.name,
+      colour: piece.colour + ' (' + size + ')',
+      price: piece.price,
+      qty: 1
+    });
+    localStorage.setItem('tread_bag', JSON.stringify(bag));
+    updateBagCount();
+  }
+
+  document.getElementById('looksContainer').onclick = function (e) {
+    var list = activeCat === 'all' ? LOOKS : LOOKS.filter(function (l) { return l.cat === activeCat; });
+
+    var addOne = e.target.closest('.add-piece');
+    if (addOne) {
+      var lIdx = +addOne.dataset.l;
+      var pIdx = +addOne.dataset.p;
+      var sz = document.getElementById('lsz-' + lIdx + '-' + pIdx).value;
+      var piece = list[lIdx].pieces[pIdx];
+      pushToBag(piece, sz);
+      toast(piece.name + ' (' + sz + ') added to bag');
+      return;
+    }
+
+    var addAll = e.target.closest('.add-all-btn');
+    if (addAll) {
+      var idx = +addAll.dataset.all;
+      list[idx].pieces.forEach(function (piece, pIdx) {
+        var sz = document.getElementById('lsz-' + idx + '-' + pIdx).value;
+        pushToBag(piece, sz);
+      });
+      toast(list[idx].title + ' added to bag');
+    }
+  };
+
+  renderLooks();
+})();
+</script>
+</body>
+</html>
