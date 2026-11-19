@@ -1,7 +1,7 @@
 databases:
   - name: virtual-fashion-db
     databaseName: virtual_fashion_db
-    user: postgres
+    user: virtual_fashion_user
     plan: free
 
 services:
